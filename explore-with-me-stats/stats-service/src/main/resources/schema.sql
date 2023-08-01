@@ -1,0 +1,17 @@
+DROP TABLE IF EXISTS uris CASCADE;
+DROP TABLE IF EXISTS stats CASCADE;
+
+CREATE TABLE uris (
+                      id BIGSERIAL PRIMARY KEY,
+                      name VARCHAR(100) NOT NULL,
+                      CONSTRAINT UNIQUE_NAME UNIQUE (name)
+);
+
+CREATE TABLE stats (
+    id BIGSERIAL PRIMARY KEY,
+    app VARCHAR(100) NOT NULL,
+    uri_id BIGINT NOT NULL,
+    ip VARCHAR(100) NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    CONSTRAINT fk_stats_to_uris FOREIGN KEY (uri_id) REFERENCES uris (id) ON DELETE CASCADE
+);
