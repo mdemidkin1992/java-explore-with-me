@@ -1,15 +1,44 @@
 version: '3.1'
 services:
   stats-server:
+    build:
+      context: ./explore-with-me-stats/stats-service
+      dockerfile: Dockerfile-stats
+    image: ewm-stats-service
     ports:
       - "9090:9090"
+    depends_on:
+      - stats-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewmstats
+      - USERNAME_DB=postgres
+      - PASSWORD_DB=iamroot
 
   stats-db:
     image: postgres:14-alpine
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-postgres
+    volumes:
+      - /var/lib/postgresql/data/
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=ewmstats
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot
 
   ewm-service:
+    build:
+      context: ./explore-wth-me-main
+      dockerfile: Dockerfile-main
+    image: ewm-main-service
     ports:
       - "8080:8080"
+    depends_on:
+      - stats-server
+    environment:
+      - EWM_SERVER_URL=http://stats-server:9090
 
   ewm-db:
     image: postgres:14-alpine
