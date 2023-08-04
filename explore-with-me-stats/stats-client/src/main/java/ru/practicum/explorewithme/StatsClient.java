@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.explorewithme.dto.StatDto;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+
 @Service
 public class StatsClient extends BaseClient {
     private static final String API_PREFIX = "/hit";
@@ -23,15 +26,13 @@ public class StatsClient extends BaseClient {
         );
     }
 
-//    public ResponseEntity<Object> getEvents() {
-//        return get("");
-//    }
-//
-//    public ResponseEntity<Object> getEvent(long eventId) {
-//        return get("/" + eventId);
-//    }
-
-    public ResponseEntity<Object> sendHit(StatDto statDto) {
-        return get("", statDto);
+    public ResponseEntity<Object> sendHit(HttpServletRequest request) {
+        StatDto statDto = StatDto.builder()
+                .app("ewm-main-service")
+                .uri(request.getRequestURI())
+                .ip(request.getRemoteAddr())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return post("", statDto);
     }
 }

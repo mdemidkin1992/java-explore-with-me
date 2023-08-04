@@ -24,15 +24,7 @@ public class MainController {
     @GetMapping
     public ResponseEntity<Object> getEvents(HttpServletRequest request) {
         log.info("GET request for events received from Main client 8080");
-
-        StatDto dto = StatDto.builder()
-                .app("ewm-main-service")
-                .uri(request.getRequestURI())
-                .ip(request.getRemoteAddr())
-                .timestamp(LocalDateTime.now())
-                .build();
-
-        ResponseEntity<Object> response = statsClient.sendHit(dto);
+        ResponseEntity<Object> response = statsClient.sendHit(request);
         log.info("{}", response);
         return response;
     }
@@ -40,15 +32,7 @@ public class MainController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<Object> getEventById(@PathVariable long id, HttpServletRequest request) {
         log.info("GET request for events received from Main client 8080");
-
-        StatDto dto = StatDto.builder()
-                .app("ewm-main-service")
-                .uri(request.getRequestURI())
-                .ip(request.getRemoteAddr())
-                .timestamp(LocalDateTime.now())
-                .build();
-
-        ResponseEntity<Object> response = statsClient.sendHit(dto);
+        ResponseEntity<Object> response = statsClient.sendHit(request);
         log.info("{}", response);
         return response;
     }
