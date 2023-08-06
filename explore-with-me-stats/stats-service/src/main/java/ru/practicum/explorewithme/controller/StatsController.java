@@ -19,10 +19,11 @@ public class StatsController {
 
     @PostMapping(path = "/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveStats(@RequestBody StatDto statDto) {
+    public StatDto saveStats(@RequestBody StatDto statDto) {
         log.info("POST request for stats received: {}", statDto);
         StatDto response = service.saveStats(statDto);
         log.info("Stats saved: {}", response);
+        return response;
     }
 
     @GetMapping(path = "/stats")
