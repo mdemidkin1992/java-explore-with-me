@@ -84,10 +84,10 @@ class StatsServiceImplTest {
 
         List<StatDtoWithHits> expected = List.of(statDtoWithHits);
         String[] uris = {uri.getName()};
-        assertEquals(expected, statsService.getStats(FORMATTER.format(START), FORMATTER.format(END), null, false));
-        assertEquals(expected, statsService.getStats(FORMATTER.format(START), FORMATTER.format(END), uris, false));
-        assertEquals(expected, statsService.getStats(FORMATTER.format(START), FORMATTER.format(END), null, true));
-        assertEquals(expected, statsService.getStats(FORMATTER.format(START), FORMATTER.format(END), uris, true));
+        assertEquals(expected, statsService.getStats(START, END, null, false));
+        assertEquals(expected, statsService.getStats(START, END, uris, false));
+        assertEquals(expected, statsService.getStats(START, END, null, true));
+        assertEquals(expected, statsService.getStats(START, END, uris, true));
     }
 
     @Test

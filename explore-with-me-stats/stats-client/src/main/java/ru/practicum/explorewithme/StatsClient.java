@@ -11,28 +11,42 @@ import ru.practicum.explorewithme.dto.StatDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 public class StatsClient extends BaseClient {
-    private static final String API_PREFIX = "/hit";
-
     @Autowired
     public StatsClient(@Value("${explore-with-me-stats-service.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
     }
 
-    public ResponseEntity<Object> sendHit(HttpServletRequest request) {
+    public ResponseEntity<Object> sendHit(String appName, HttpServletRequest request) {
         StatDto statDto = StatDto.builder()
-                .app("ewm-main-service")
+                .app(appName)
                 .uri(request.getRequestURI())
                 .ip(request.getRemoteAddr())
                 .timestamp(LocalDateTime.now())
                 .build();
-        return post("", statDto);
+        return post("/hits", statDto);
+    }
+
+    public ResponseEntity<Object> getStats(LocalDateTime start,
+                                           LocalDateTime end,
+                                           String[] uris,
+                                           Boolean unique) {
+
+        Map<String, Object> parameters = Map.of(
+                "start", start,
+                "end", end,
+                "uris", uris,
+                "unique", unique
+        );
+
+        return get("/stats", parameters);
     }
 }

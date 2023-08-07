@@ -17,6 +17,7 @@ public class StatDto {
     private String uri;
     @NotBlank
     private String ip;
+    @NonNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 }

@@ -2,9 +2,9 @@ DROP TABLE IF EXISTS uris CASCADE;
 DROP TABLE IF EXISTS stats CASCADE;
 
 CREATE TABLE uris (
-                      id BIGSERIAL PRIMARY KEY,
-                      name VARCHAR(100) NOT NULL,
-                      CONSTRAINT UNIQUE_NAME UNIQUE (name)
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    CONSTRAINT UNIQUE_NAME UNIQUE (name)
 );
 
 CREATE TABLE stats (

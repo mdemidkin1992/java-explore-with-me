@@ -22,7 +22,6 @@
         <dependency>
             <groupId>ru.practicum</groupId>
             <artifactId>stats-dto</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>

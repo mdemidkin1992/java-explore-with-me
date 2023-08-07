@@ -12,7 +12,6 @@ import ru.practicum.explorewithme.repository.StatsRepository;
 import ru.practicum.explorewithme.repository.UriRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -39,22 +38,19 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<StatDtoWithHits> getStats(String start, String end, String[] uris, Boolean unique) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime startDate = LocalDateTime.parse(start, formatter);
-        LocalDateTime endDate = LocalDateTime.parse(end, formatter);
+    public List<StatDtoWithHits> getStats(LocalDateTime start, LocalDateTime end, String[] uris, Boolean unique) {
 
         if (!unique) {
             if (uris == null || uris.length == 0) {
-                return statsRepository.getStatsForTimeInterval(startDate, endDate);
+                return statsRepository.getStatsForTimeInterval(start, end);
             } else {
-                return statsRepository.getStatsForTimeIntervalAndUris(startDate, endDate, uris);
+                return statsRepository.getStatsForTimeIntervalAndUris(start, end, uris);
             }
         } else {
             if (uris == null || uris.length == 0) {
-                return statsRepository.getStatsForTimeIntervalUnique(startDate, endDate);
+                return statsRepository.getStatsForTimeIntervalUnique(start, end);
             } else {
-                return statsRepository.getStatsForTimeIntervalAndUrisUnique(startDate, endDate, uris);
+                return statsRepository.getStatsForTimeIntervalAndUrisUnique(start, end, uris);
             }
         }
 

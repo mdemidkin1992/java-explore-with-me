@@ -13,6 +13,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.practicum.explorewithme.StatsClient;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(MainController.class)
@@ -24,6 +27,10 @@ public class MainControllerTest {
     @MockBean
     private StatsClient statsClient;
 
+    private static final LocalDateTime START = LocalDateTime.of(2020, 1, 1, 9, 0, 0);
+    private static final LocalDateTime END = LocalDateTime.of(2035, 1, 1, 9, 0, 0);
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -32,12 +39,14 @@ public class MainControllerTest {
     @Test
     public void testGetEvents() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/events")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("start", FORMATTER.format(START))
+                        .param("end", FORMATTER.format(END)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(""))
                 .andDo(MockMvcResultHandlers.print());
 
-        verify(statsClient).sendHit(any());
+        verify(statsClient).sendHit(any(), any());
     }
 
     @Test
@@ -50,7 +59,7 @@ public class MainControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string(""))
                 .andDo(MockMvcResultHandlers.print());
 
-        verify(statsClient).sendHit(any());
+        verify(statsClient).sendHit(any(), any());
     }
 
 }
