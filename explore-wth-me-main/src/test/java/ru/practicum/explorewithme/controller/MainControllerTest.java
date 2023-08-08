@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 
 import static org.mockito.Mockito.*;
 
-@WebMvcTest(MainController.class)
+@WebMvcTest(EventsController.class)
 public class MainControllerTest {
 
     @Autowired

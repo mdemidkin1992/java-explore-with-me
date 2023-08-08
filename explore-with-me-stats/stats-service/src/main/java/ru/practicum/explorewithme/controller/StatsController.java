@@ -30,21 +30,13 @@ public class StatsController {
 
     @GetMapping(path = "/stats")
     public List<StatDtoWithHits> getStats(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-            @RequestParam(required = false) String[] uris,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+            @RequestParam(required = false) List<String> uris,
             @RequestParam(required = false, defaultValue = "false") Boolean unique
     ) {
         log.info("GET request for stats received from {} to {} with uris: {}", start, end, uris);
         List<StatDtoWithHits> response = service.getStats(start, end, uris, unique);
-        log.info("{}", response);
-        return response;
-    }
-
-    @GetMapping(path = "/stats/{id}")
-    public StatDto getStatsById(@PathVariable long id) {
-        log.info("GET request received for stats with id {}", id);
-        StatDto response = service.getStatsById(id);
         log.info("{}", response);
         return response;
     }
