@@ -18,7 +18,7 @@ services:
     image: postgres:14-alpine
     build:
       context: ./
-      dockerfile: ./Dockerfile-postgres
+      dockerfile: Dockerfile-postgres-stats
     volumes:
       - /var/lib/postgresql/data/
     ports:
@@ -37,8 +37,23 @@ services:
       - "8080:8080"
     depends_on:
       - stats-server
+      - ewm-db
     environment:
       - EWM_SERVER_URL=http://stats-server:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmmain
+      - USERNAME_DB=postgres
+      - PASSWORD_DB=iamroot
 
   ewm-db:
     image: postgres:14-alpine
+    build:
+      context: ./
+      dockerfile: Dockerfile-postgres-main
+    volumes:
+      - /var/lib/postgresql/data/
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=ewmmain
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot

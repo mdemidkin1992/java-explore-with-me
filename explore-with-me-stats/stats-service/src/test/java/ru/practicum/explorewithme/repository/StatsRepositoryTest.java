@@ -10,7 +10,6 @@ import ru.practicum.explorewithme.dto.StatDto;
 import ru.practicum.explorewithme.dto.StatDtoWithHits;
 import ru.practicum.explorewithme.model.Stat;
 import ru.practicum.explorewithme.model.StatMapper;
-import ru.practicum.explorewithme.model.Uri;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,8 +24,6 @@ class StatsRepositoryTest {
 
     @Autowired
     private StatsRepository statsRepository;
-    @Autowired
-    private UriRepository uriRepository;
 
     private StatDto statDto1, statDto2;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -53,16 +50,9 @@ class StatsRepositoryTest {
 
         StatDto statDto3 = statDto2;
 
-        Uri uri1 = uriRepository.save(Uri.builder().name(statDto1.getUri()).build());
-        Uri uri2 = uriRepository.save(Uri.builder().name(statDto2.getUri()).build());
-
         Stat stat1 = StatMapper.fromStatDto(statDto1);
         Stat stat2 = StatMapper.fromStatDto(statDto2);
         Stat stat3 = StatMapper.fromStatDto(statDto3);
-
-        stat1.setUri(uri1);
-        stat2.setUri(uri2);
-        stat3.setUri(uri2);
 
         statsRepository.save(stat1);
         statsRepository.save(stat2);
@@ -71,9 +61,9 @@ class StatsRepositoryTest {
 
     @Test
     void getStatsForTimeIntervalAndUris() {
-        final String[] uris = {"/events"};
+        final List<String> uris = List.of("/events");
 
-        List<StatDtoWithHits> actual = statsRepository.getStatsForTimeIntervalAndUris(START, END, uris);
+        List<StatDtoWithHits> actual = statsRepository.getStatsForTimeInterval(START, END, uris);
         List<StatDtoWithHits> expected = List.of(new StatDtoWithHits(statDto1.getApp(), statDto1.getUri(), hits));
 
         assertNotNull(actual);
@@ -85,10 +75,10 @@ class StatsRepositoryTest {
 
     @Test
     void getStatsForTimeIntervalAndUrisUnique() {
-        final String[] uris = {"/events/1"};
+        final List<String> uris = List.of("/events");
 
-        List<StatDtoWithHits> actual = statsRepository.getStatsForTimeIntervalAndUrisUnique(START, END, uris);
-        List<StatDtoWithHits> expected = List.of(new StatDtoWithHits(statDto2.getApp(), statDto2.getUri(), hits));
+        List<StatDtoWithHits> actual = statsRepository.getStatsForTimeIntervalUnique(START, END, uris);
+        List<StatDtoWithHits> expected = List.of(new StatDtoWithHits(statDto1.getApp(), statDto1.getUri(), hits));
 
         assertNotNull(actual);
         assertEquals(expected.size(), actual.size());
@@ -99,7 +89,7 @@ class StatsRepositoryTest {
 
     @Test
     void getStatsForTimeInterval() {
-        List<StatDtoWithHits> actual = statsRepository.getStatsForTimeInterval(START, END);
+        List<StatDtoWithHits> actual = statsRepository.getStatsForTimeInterval(START, END, null);
         List<StatDtoWithHits> expected = List.of(
                 new StatDtoWithHits(statDto2.getApp(), statDto2.getUri(), hits + 1),
                 new StatDtoWithHits(statDto1.getApp(), statDto1.getUri(), hits)
@@ -117,7 +107,7 @@ class StatsRepositoryTest {
 
     @Test
     void getStatsForTimeIntervalUnique() {
-        List<StatDtoWithHits> actual = statsRepository.getStatsForTimeIntervalUnique(START, END);
+        List<StatDtoWithHits> actual = statsRepository.getStatsForTimeIntervalUnique(START, END, null);
         List<StatDtoWithHits> expected = List.of(
                 new StatDtoWithHits(statDto1.getApp(), statDto1.getUri(), hits),
                 new StatDtoWithHits(statDto2.getApp(), statDto2.getUri(), hits)
@@ -136,7 +126,6 @@ class StatsRepositoryTest {
     @AfterEach
     void clearDb() {
         statsRepository.deleteAll();
-        uriRepository.deleteAll();
     }
 
 }

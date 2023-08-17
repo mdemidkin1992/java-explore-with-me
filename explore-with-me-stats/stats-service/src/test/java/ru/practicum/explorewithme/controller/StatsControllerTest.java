@@ -74,7 +74,9 @@ class StatsControllerTest extends CrudOperations {
         MvcResult result = mockMvc.perform(get("/stats")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("start", "2020-01-01 10:00:00")
-                        .param("end", "2035-01-01 10:00:00"))
+                        .param("end", "2035-01-01 10:00:00")
+                        .param("uris", "/events")
+                        .param("unique", "false"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -88,27 +90,6 @@ class StatsControllerTest extends CrudOperations {
         assertEquals(expected.getApp(), dtos.get(0).getApp());
         assertEquals(expected.getUri(), dtos.get(0).getUri());
         assertEquals(expected.getHits(), dtos.get(0).getHits());
-    }
-
-    @Test
-    @SneakyThrows
-    void getStatsById() {
-        saveStatsToDb(statDto);
-        int id = 1;
-
-        MvcResult result = mockMvc.perform(get("/stats/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        StatDto actual = objectMapper.readValue(result.getResponse().getContentAsString(), StatDto.class);
-
-        assertNotNull(actual);
-        assertEquals(statDto.getApp(), actual.getApp());
-        assertEquals(statDto.getUri(), actual.getUri());
-        assertEquals(statDto.getIp(), actual.getIp());
-        assertEquals(FORMATTER.format(statDto.getTimestamp()), expectedTimestampString);
-
     }
 
 }

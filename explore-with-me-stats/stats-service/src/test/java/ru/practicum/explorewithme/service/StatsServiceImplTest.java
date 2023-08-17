@@ -10,12 +10,11 @@ import ru.practicum.explorewithme.dto.StatDto;
 import ru.practicum.explorewithme.dto.StatDtoWithHits;
 import ru.practicum.explorewithme.model.Stat;
 import ru.practicum.explorewithme.model.StatMapper;
-import ru.practicum.explorewithme.model.Uri;
 import ru.practicum.explorewithme.repository.StatsRepository;
-import ru.practicum.explorewithme.repository.UriRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +30,6 @@ class StatsServiceImplTest {
     private StatsServiceImpl statsService;
     @Mock
     private StatsRepository statsRepository;
-    @Mock
-    private UriRepository uriRepository;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final LocalDateTime START = LocalDateTime.parse("2020-01-01 10:00:00", FORMATTER);
@@ -41,7 +38,6 @@ class StatsServiceImplTest {
 
     private StatDto statDto;
     private Stat stat;
-    private Uri uri;
 
     @BeforeEach
     void init() {
@@ -53,18 +49,10 @@ class StatsServiceImplTest {
                 .build();
 
         stat = StatMapper.fromStatDto(statDto);
-
-        uri = Uri.builder()
-                .id(1L)
-                .name(statDto.getUri())
-                .build();
-
-        stat.setUri(uri);
     }
 
     @Test
     void saveStats() {
-        when(uriRepository.findByName(stat.getUri().getName())).thenReturn(uri);
         when(statsRepository.save(any())).thenReturn(stat);
 
         StatDto expected = StatMapper.toStatDto(stat);
@@ -75,27 +63,20 @@ class StatsServiceImplTest {
     @Test
     void getStats() {
         int hits = 1;
-//        StatDtoWithHits statDtoWithHits = new StatDtoWithHits(stat.getApp(), stat.getUri().getName(), hits);
-//
-//        when(statsRepository.getStatsForTimeIntervalAndUrisUnique(any(), any(), any())).thenReturn(List.of(statDtoWithHits));
-//        when(statsRepository.getStatsForTimeIntervalAndUris(any(), any(), any())).thenReturn(List.of(statDtoWithHits));
-//        when(statsRepository.getStatsForTimeInterval(any(), any())).thenReturn(List.of(statDtoWithHits));
-//        when(statsRepository.getStatsForTimeIntervalUnique(any(), any())).thenReturn(List.of(statDtoWithHits));
-//
-//        List<StatDtoWithHits> expected = List.of(statDtoWithHits);
-//        String[] uris = {uri.getName()};
-////        assertEquals(expected, statsService.getStats(START, END, null, false));
-////        assertEquals(expected, statsService.getStats(START, END, uris, false));
-////        assertEquals(expected, statsService.getStats(START, END, null, true));
-////        assertEquals(expected, statsService.getStats(START, END, uris, true));
+        StatDtoWithHits statDtoWithHits = new StatDtoWithHits(stat.getApp(), stat.getUri(), hits);
+//        List<String> emptyList = Collections.emptyList();
+
+        when(statsRepository.getStatsForTimeIntervalUnique(any(), any(), any())).thenReturn(List.of(statDtoWithHits));
+        when(statsRepository.getStatsForTimeInterval(any(), any(), any())).thenReturn(List.of(statDtoWithHits));
+//        when(statsRepository.getStatsForTimeInterval(any(), any(), emptyList)).thenReturn(List.of(statDtoWithHits));
+//        when(statsRepository.getStatsForTimeIntervalUnique(any(), any(), emptyList)).thenReturn(List.of(statDtoWithHits));
+
+        List<StatDtoWithHits> expected = List.of(statDtoWithHits);
+        List<String> uris = List.of(stat.getUri());
+//        assertEquals(expected, statsService.getStats(START, END, emptyList, false));
+        assertEquals(expected, statsService.getStats(START, END, uris, false));
+//        assertEquals(expected, statsService.getStats(START, END, emptyList, true));
+        assertEquals(expected, statsService.getStats(START, END, uris, true));
     }
 
-    @Test
-    void getStatsById() {
-        long id = 1L;
-        when(statsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(stat));
-        StatDto expected = statDto;
-        StatDto actual = statsService.getStatsById(id);
-        assertEquals(expected, actual);
-    }
 }
