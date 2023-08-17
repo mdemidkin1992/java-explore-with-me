@@ -278,19 +278,12 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
                                          String app,
                                          HttpServletRequest request
     ) {
+        statsServiceClient.sendHit(app, request);
+
         Sort sorting = Sort.by("eventDate").descending();
         Pageable page = PageRequest.of(from / size, size, sorting);
 
         List<Event> eventList
-//                = eventRepository.findEventsByPublicUsers(
-//                text != null ? text.toLowerCase() : null,
-//                categories,
-//                paid,
-//                rangeStart,
-//                rangeEnd,
-//                page
-//        );
-
                 = eventRepository.findByAnnotationContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndCategory_IdInAndPaidAndEventDateGreaterThanEqualAndEventDateLessThanEqual(
                 text != null ? text.toLowerCase() : null,
                 text != null ? text.toLowerCase() : null,
@@ -315,7 +308,6 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
             response.sort(Comparator.comparing(EventShortDto::getEventDate));
         }
 
-        statsServiceClient.sendHit(app, request);
 
         return response;
     }
