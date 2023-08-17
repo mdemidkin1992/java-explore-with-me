@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import ru.practicum.explorewithme.controller.exception.LocalDateTimeException;
 import ru.practicum.explorewithme.dto.StatDto;
 import ru.practicum.explorewithme.dto.StatDtoWithHits;
+import ru.practicum.explorewithme.dto.StatDtoWithHitsProjection;
 import ru.practicum.explorewithme.model.Stat;
 import ru.practicum.explorewithme.model.StatMapper;
 import org.springframework.stereotype.Service;
@@ -35,12 +36,20 @@ public class StatsServiceImpl implements StatsService {
         List<StatDtoWithHits> ans = new ArrayList<>();
 
         for (String u : uris) {
-            List<StatDtoWithHits> uriStats;
+            List<StatDtoWithHits> uriStats = new ArrayList<>();
+
             if (!unique) {
-                uriStats = statsRepository.getStatsForTimeInterval(start, end, List.of(u));
+                List<StatDtoWithHitsProjection> results = statsRepository.getStatsForTimeInterval(start, end, List.of(u));
+                for (StatDtoWithHitsProjection result : results) {
+                    uriStats.add(new StatDtoWithHits(result.getApp(), result.getUri(), result.getHits()));
+                }
             } else {
-                uriStats = statsRepository.getStatsForTimeIntervalUnique(start, end, List.of(u));
+                List<StatDtoWithHitsProjection> results = statsRepository.getStatsForTimeIntervalUnique(start, end, List.of(u));
+                for (StatDtoWithHitsProjection result : results) {
+                    uriStats.add(new StatDtoWithHits(result.getApp(), result.getUri(), result.getHits()));
+                }
             }
+
             ans.addAll(uriStats);
         }
 

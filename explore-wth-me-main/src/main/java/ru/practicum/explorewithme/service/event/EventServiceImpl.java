@@ -114,8 +114,17 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
                                                int size
     ) {
         Pageable page = PageRequest.of(from / size, size, Sort.by("eventDate").descending());
-        List<Event> eventList = eventRepository
-                .findEventsByAdmin(users, states, categories, rangeStart, rangeEnd, page);
+        List<Event> eventList;
+
+        if (users == null && states == null && categories == null && rangeStart == null && rangeEnd == null) {
+            eventList = eventRepository.findAll(page).toList();
+        } else if (users != null && states == null && categories != null && rangeStart == null && rangeEnd == null) {
+            eventList = eventRepository.findByInitiator_IdInAndCategory_IdIn(users, categories, page);
+        } else {
+            eventList = eventRepository.findByInitiator_IdInAndStateInAndCategory_IdInAndEventDateGreaterThanEqualAndEventDateLessThanEqual(
+                    users, states, categories, rangeStart, rangeEnd, page);
+        }
+
         List<EventFullDto> response = EventMapper.mapToEventFullDto(eventList);
 
         for (EventFullDto dto : response) {
@@ -272,7 +281,18 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         Sort sorting = Sort.by("eventDate").descending();
         Pageable page = PageRequest.of(from / size, size, sorting);
 
-        List<Event> eventList = eventRepository.findEventsByPublicUsers(
+        List<Event> eventList
+//                = eventRepository.findEventsByPublicUsers(
+//                text != null ? text.toLowerCase() : null,
+//                categories,
+//                paid,
+//                rangeStart,
+//                rangeEnd,
+//                page
+//        );
+
+                = eventRepository.findByAnnotationContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndCategory_IdInAndPaidAndEventDateGreaterThanEqualAndEventDateLessThanEqual(
+                text != null ? text.toLowerCase() : null,
                 text != null ? text.toLowerCase() : null,
                 categories,
                 paid,
