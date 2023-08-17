@@ -1,6 +1,5 @@
 package ru.practicum.explorewithme.controller.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,14 +19,5 @@ public class ErrorHandler {
     public ErrorResponse handleThrowableException(final Throwable e) {
         e.printStackTrace();
         return new ErrorResponse(e.getMessage());
-    }
-}
-
-@Getter
-class ErrorResponse {
-    private final String message;
-
-    public ErrorResponse(String message) {
-        this.message = message;
     }
 }
