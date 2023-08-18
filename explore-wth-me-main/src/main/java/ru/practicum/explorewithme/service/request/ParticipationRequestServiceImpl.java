@@ -1,6 +1,6 @@
 package ru.practicum.explorewithme.service.request;
 
-import  lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.dto.request.ParticipationRequestDto;
@@ -16,7 +16,6 @@ import ru.practicum.explorewithme.repository.UserRepository;
 import ru.practicum.explorewithme.util.exception.ClientErrorException;
 import ru.practicum.explorewithme.util.exception.EntityNotFoundException;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +28,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final ParticipationRequestRepository repository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-    private final EntityManager entityManager;
 
     @Override
     @Transactional(readOnly = true)
@@ -54,9 +52,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     @Transactional
     public ParticipationRequestDto cancelParticipationRequest(long userId, long requestId) {
-        ParticipationRequest existingRequest = entityManager.find(ParticipationRequest.class, requestId);
+        ParticipationRequest existingRequest = getParticipationRequestOrThrow(requestId);
         existingRequest.setStatus(RequestStatus.CANCELED);
-        entityManager.merge(existingRequest);
+        repository.save(existingRequest);
         return RequestMapper.mapToDto(existingRequest);
     }
 
@@ -69,6 +67,12 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private User getUserByIdOrThrowException(long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User with id: " + userId + " was not found")
+        );
+    }
+
+    private ParticipationRequest getParticipationRequestOrThrow(long requestId) {
+        return repository.findById(requestId).orElseThrow(
+                () -> new EntityNotFoundException("Request with id not found")
         );
     }
 

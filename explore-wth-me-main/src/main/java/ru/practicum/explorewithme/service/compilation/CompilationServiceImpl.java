@@ -16,9 +16,7 @@ import ru.practicum.explorewithme.repository.EventRepository;
 import ru.practicum.explorewithme.util.exception.ClientErrorException;
 import ru.practicum.explorewithme.util.exception.EntityNotFoundException;
 
-import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +25,6 @@ public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
-    private final EntityManager entityManager;
 
     @Override
     @Transactional
@@ -47,14 +44,14 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public void deleteCompilation(long compId) {
-        checkCompilationAndThrowIfNotExists(compId);
+        getCompilationOrThrow(compId);
         compilationRepository.deleteById(compId);
     }
 
     @Override
     @Transactional
     public CompilationDto updateCompilation(long compId, UpdateCompilationRequest updateRequest) {
-        Compilation existingCompilation = entityManager.find(Compilation.class, compId);
+        Compilation existingCompilation = getCompilationOrThrow(compId);
 
         if (updateRequest.getTitle() != null) {
             if (compilationRepository.findCompilationByTitle(updateRequest.getTitle()).isPresent()) {
@@ -77,7 +74,7 @@ public class CompilationServiceImpl implements CompilationService {
             }
         }
 
-        entityManager.merge(existingCompilation);
+        compilationRepository.save(existingCompilation);
 
         return CompilationMapper.mapEntityToDto(existingCompilation);
     }
@@ -100,15 +97,13 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional(readOnly = true)
     public CompilationDto getCompilation(long compId) {
-        Compilation response = checkCompilationAndThrowIfNotExists(compId);
+        Compilation response = getCompilationOrThrow(compId);
         return CompilationMapper.mapEntityToDto(response);
     }
 
-    private Compilation checkCompilationAndThrowIfNotExists(long compId) {
-        Optional<Compilation> mayBeCompilation = compilationRepository.getCompilationById(compId);
-        if (mayBeCompilation.isEmpty()) {
-            throw new EntityNotFoundException("Compilation with id " + compId + " not found");
-        }
-        return mayBeCompilation.get();
+    private Compilation getCompilationOrThrow(long compId) {
+        return compilationRepository.findById(compId).orElseThrow(
+                () -> new EntityNotFoundException("Compilation with id " + compId + " not found")
+        );
     }
 }

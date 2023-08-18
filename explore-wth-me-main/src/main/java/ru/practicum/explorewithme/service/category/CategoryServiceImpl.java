@@ -15,7 +15,6 @@ import ru.practicum.explorewithme.repository.EventRepository;
 import ru.practicum.explorewithme.util.exception.ClientErrorException;
 import ru.practicum.explorewithme.util.exception.EntityNotFoundException;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
@@ -25,7 +24,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
-    private final EntityManager entityManager;
 
     @Override
     @Transactional
@@ -53,13 +51,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto updateCategory(long catId, CategoryDto updateCategoryRequest) {
-        Category existingCategory = entityManager.find(Category.class, catId);
+        Category existingCategory = getCategoryOrThrowException(catId);
         if (!isUpdatedCategoryTheSame(existingCategory, updateCategoryRequest)) {
             checkIfCategoryNameExists(updateCategoryRequest.getName());
         }
         existingCategory.setName(updateCategoryRequest.getName());
-        entityManager.merge(existingCategory);
-        existingCategory.setName(updateCategoryRequest.getName());
+        categoryRepository.save(existingCategory);
         return CategoryMapper.mapDtoFromEntity(existingCategory);
     }
 

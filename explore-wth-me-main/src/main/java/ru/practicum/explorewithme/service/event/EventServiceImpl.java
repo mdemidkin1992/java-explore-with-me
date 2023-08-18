@@ -24,8 +24,6 @@ import ru.practicum.explorewithme.repository.*;
 import ru.practicum.explorewithme.util.exception.ClientErrorException;
 import ru.practicum.explorewithme.util.exception.EntityNotFoundException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -36,8 +34,6 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class EventServiceImpl extends UpdateEventOperations implements EventService {
 
-    @PersistenceContext
-    private final EntityManager entityManager;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final ParticipationRequestRepository requestRepository;
@@ -88,10 +84,10 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
     @Override
     @Transactional
     public EventFullDto updateEventRequest(long eventId, UpdateEventUserRequest updateEventUserRequest) {
-        Event existingEvent = entityManager.find(Event.class, eventId);
+        Event existingEvent = getEventByIdOrThrowException(eventId);
         checkIfEventIsAlreadyPublished(existingEvent);
         updateEvent(existingEvent, updateEventUserRequest);
-        entityManager.merge(existingEvent);
+        eventRepository.save(existingEvent);
         return EventMapper.mapEventFullDtoFromEntity(existingEvent);
     }
 
@@ -154,14 +150,10 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
 
         if (participationLimit == 0 || !requestModeration) {
-            updateRequestsStatusWhenModerationNotRequired(
-                    requestIds,
-                    entityManager
-            );
+            updateRequestsStatusWhenModerationNotRequired(requestIds);
         } else {
             updateRequestsStatusWhenModerationRequired(
                     requestIds,
-                    entityManager,
                     confirmedParticipants,
                     participationLimit,
                     confirmedRequests,
@@ -176,22 +168,16 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
                 .build();
     }
 
-    private void updateRequestsStatusWhenModerationNotRequired(
-            List<Long> requestIds,
-            EntityManager entityManager
-    ) {
+    private void updateRequestsStatusWhenModerationNotRequired(List<Long> requestIds) {
         for (Long requestId : requestIds) {
-            ParticipationRequest existingRequest
-                    = entityManager.find(ParticipationRequest.class, requestId);
-
+            ParticipationRequest existingRequest = getRequestByIdOrThrowException(requestId);
             existingRequest.setStatus(RequestStatus.CONFIRMED);
-            entityManager.merge(existingRequest);
+            requestRepository.save(existingRequest);
         }
     }
 
     private void updateRequestsStatusWhenModerationRequired(
             List<Long> requestIds,
-            EntityManager entityManager,
             int confirmedParticipants,
             int participationLimit,
             List<ParticipationRequestDto> confirmedRequests,
@@ -199,8 +185,7 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
             RequestStatus status
     ) {
         for (Long requestId : requestIds) {
-            ParticipationRequest existingRequest
-                    = entityManager.find(ParticipationRequest.class, requestId);
+            ParticipationRequest existingRequest = getRequestByIdOrThrowException(requestId);
 
             if (existingRequest.getStatus().equals(RequestStatus.CONFIRMED)
                     && status.equals(RequestStatus.REJECTED)) {
@@ -210,7 +195,6 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
             if (confirmedParticipants < participationLimit) {
                 setStatusIfLimitNotReached(
                         existingRequest,
-                        entityManager,
                         confirmedRequests,
                         rejectedRequests,
                         status
@@ -221,7 +205,6 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
             } else {
                 rejectIfLimitReached(
                         existingRequest,
-                        entityManager,
                         rejectedRequests,
                         status
                 );
@@ -231,14 +214,13 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
 
     private void setStatusIfLimitNotReached(
             ParticipationRequest existingRequest,
-            EntityManager entityManager,
             List<ParticipationRequestDto> confirmedRequests,
             List<ParticipationRequestDto> rejectedRequests,
             RequestStatus status
     ) {
         if (existingRequest.getStatus().equals(RequestStatus.PENDING)) {
             existingRequest.setStatus(status);
-            entityManager.merge(existingRequest);
+            requestRepository.save(existingRequest);
             if (Objects.requireNonNull(status) == RequestStatus.CONFIRMED) {
                 confirmedRequests.add(RequestMapper.mapToDto(existingRequest));
             } else {
@@ -251,7 +233,6 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
 
     private void rejectIfLimitReached(
             ParticipationRequest existingRequest,
-            EntityManager entityManager,
             List<ParticipationRequestDto> rejectedRequests,
             RequestStatus status
     ) {
@@ -259,7 +240,7 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
             throw new ClientErrorException("Limit has been reached");
         } else {
             existingRequest.setStatus(RequestStatus.REJECTED);
-            entityManager.merge(existingRequest);
+            requestRepository.save(existingRequest);
             rejectedRequests.add(RequestMapper.mapToDto(existingRequest));
         }
     }
@@ -348,6 +329,13 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
     private User getUserByIdOrThrowException(long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User with id: " + userId + " was not found")
+        );
+    }
+
+    private ParticipationRequest getRequestByIdOrThrowException(long requestId) {
+        return requestRepository.findById(requestId).orElseThrow(
+                () -> new EntityNotFoundException("Participation request with id: "
+                        + requestId + " was not found")
         );
     }
 
