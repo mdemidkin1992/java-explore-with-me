@@ -45,7 +45,7 @@ public class StatsServiceImpl implements StatsService {
             } else {
                 List<StatDtoWithHits> results = statsRepository.getStatsForTimeIntervalUnique(start, end, List.of(u))
                         .stream()
-                        .map(s -> new StatDtoWithHits(s.getApp(), s.getUri(), s.getHits()) )
+                        .map(s -> new StatDtoWithHits(s.getApp(), s.getUri(), s.getHits()))
                         .collect(Collectors.toList());
                 ans.addAll(results);
             }
