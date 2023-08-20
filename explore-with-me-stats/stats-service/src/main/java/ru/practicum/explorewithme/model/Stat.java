@@ -17,8 +17,7 @@ public class Stat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String app;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Uri uri;
+    private String uri;
     private String ip;
     private LocalDateTime timestamp;
 }
