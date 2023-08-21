@@ -61,5 +61,17 @@ public class EventsController {
         return response;
     }
 
+    @GetMapping(path = "/{locationId}/locations")
+    public List<EventShortDto> getEventsInLocation(
+            @PathVariable(name = "locationId") long locationId,
+            @RequestParam(required = false, defaultValue = "0") int from,
+            @RequestParam(required = false, defaultValue = "10") int size
+    ) {
+        log.info("GET | Events in location");
+        List<EventShortDto> response = eventService.getEventsInLocation(locationId, from, size);
+        log.info("{}", response);
+        return response;
+    }
+
 }
 

@@ -13,12 +13,15 @@ import ru.practicum.explorewithme.dto.event.EventShortDto;
 import ru.practicum.explorewithme.dto.event.NewEventDto;
 import ru.practicum.explorewithme.dto.event.UpdateEventUserRequest;
 import ru.practicum.explorewithme.dto.event.mapper.EventMapper;
+import ru.practicum.explorewithme.dto.location.LocationDtoUser;
+import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
 import ru.practicum.explorewithme.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.explorewithme.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.explorewithme.dto.request.ParticipationRequestDto;
 import ru.practicum.explorewithme.dto.request.mapper.RequestMapper;
 import ru.practicum.explorewithme.model.*;
 import ru.practicum.explorewithme.model.enums.EventState;
+import ru.practicum.explorewithme.model.enums.LocationStatus;
 import ru.practicum.explorewithme.model.enums.RequestStatus;
 import ru.practicum.explorewithme.repository.*;
 import ru.practicum.explorewithme.util.exception.ClientErrorException;
@@ -67,7 +70,7 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         request.setCreatedOn(LocalDateTime.now());
         request.setState(EventState.PENDING);
 
-        Location location = locationRepository.save(newEventDto.getLocation());
+        Location location = checkIfExistsAndReturnLocation(newEventDto.getLocation());
         request.setLocation(location);
 
         Event response = eventRepository.save(request);
@@ -305,6 +308,15 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         return response;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<EventShortDto> getEventsInLocation(long locationId, int from, int size) {
+        Pageable page = PageRequest.of(from / size, size, Sort.by("eventDate").descending());
+        Location location = getExistingLocationOrThrowException(locationId);
+        List<Event> eventList = eventRepository.findEventsWithLocationRadius(location.getLat(), location.getLon(), page);
+        return EventMapper.mapToEventShortDto(eventList);
+    }
+
     private int getConfirmedRequests(long id) {
         return requestRepository.findAllByEventIdAndStatus(id, RequestStatus.CONFIRMED).size();
     }
@@ -336,6 +348,25 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         return requestRepository.findById(requestId).orElseThrow(
                 () -> new EntityNotFoundException("Participation request with id: "
                         + requestId + " was not found")
+        );
+    }
+
+    private Location checkIfExistsAndReturnLocation(LocationDtoUser locationDto) {
+        Double lat = locationDto.getLat();
+        Double lon = locationDto.getLon();
+
+        if (locationRepository.existsByLatAndLon(lat, lon)) {
+            return locationRepository.findByLatAndLon(lat, lon);
+        } else {
+            Location newLocation = LocationMapper.mapFromLocationShortDto(locationDto);
+            newLocation.setStatus(LocationStatus.SUGGESTED_BY_USER);
+            return locationRepository.save(newLocation);
+        }
+    }
+
+    private Location getExistingLocationOrThrowException(long locationId) {
+        return locationRepository.findById(locationId).orElseThrow(
+                () -> new EntityNotFoundException("Location with id " + locationId + " not found")
         );
     }
 

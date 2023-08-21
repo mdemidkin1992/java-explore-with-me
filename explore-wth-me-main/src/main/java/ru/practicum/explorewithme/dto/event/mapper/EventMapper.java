@@ -5,6 +5,7 @@ import ru.practicum.explorewithme.dto.category.mapper.CategoryMapper;
 import ru.practicum.explorewithme.dto.event.EventFullDto;
 import ru.practicum.explorewithme.dto.event.EventShortDto;
 import ru.practicum.explorewithme.dto.event.NewEventDto;
+import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
 import ru.practicum.explorewithme.dto.user.mapper.UserMapper;
 import ru.practicum.explorewithme.model.Category;
 import ru.practicum.explorewithme.model.Event;
@@ -21,7 +22,7 @@ public class EventMapper {
                 .category(Category.builder().id(dto.getCategory()).build())
                 .description(dto.getDescription())
                 .eventDate(dto.getEventDate())
-                .location(dto.getLocation())
+                .location(LocationMapper.mapFromLocationShortDto(dto.getLocation()))
                 .paid(dto.getPaid() != null && dto.getPaid())
                 .participantLimit(dto.getParticipantLimit() == null ? 0 : dto.getParticipantLimit())
                 .requestModeration(dto.getRequestModeration() == null || dto.getRequestModeration())
