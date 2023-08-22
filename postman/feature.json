@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "a7c6335d-44f1-4f36-823f-47fbe8a39b0e",
+		"_postman_id": "af22cc24-3f87-466e-adae-5de2a3ec9024",
 		"name": "Test feature_ location_processing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "29196251"
+		"_exporter_id": "29277374"
 	},
 	"item": [
 		{
@@ -76,7 +76,8 @@
 								"admin",
 								"locations"
 							]
-						}
+						},
+						"description": "Базовая локация г. Москва, внутри окружности которой будут две другие локации"
 					},
 					"response": []
 				},
@@ -147,7 +148,8 @@
 								"admin",
 								"locations"
 							]
-						}
+						},
+						"description": "Локация \"Парк Горького\", где будут 2 события"
 					},
 					"response": []
 				},
@@ -193,7 +195,8 @@
 								"admin",
 								"locations"
 							]
-						}
+						},
+						"description": "Повторное добавление одинаковой локации выдает ошибку 409"
 					},
 					"response": []
 				},
@@ -264,7 +267,8 @@
 								"admin",
 								"locations"
 							]
-						}
+						},
+						"description": "Локация \"Театр\" в г. Москва, где будет проходить 1 событие"
 					},
 					"response": []
 				},
@@ -294,7 +298,7 @@
 									"    pm.expect(body[1].name, 'Location 2 name must be \"Парк Горького\"').to.equal(\"Парк Горького\");",
 									"    pm.expect(body[1].events, 'Location 2 events must be 0').to.equal(0);",
 									"});",
-									"pm.test(\"Test second element in locations array\", function () {",
+									"pm.test(\"Test third element in locations array\", function () {",
 									"    const body = pm.response.json();",
 									"    pm.expect(body[2], 'Location 2 must have property \"name\"').to.have.property(\"name\");",
 									"    pm.expect(body[2], 'Location 2 must have property \"events\"').to.have.property(\"events\");",
@@ -319,7 +323,8 @@
 							"path": [
 								"locations"
 							]
-						}
+						},
+						"description": "Проверка, что все локации добавлены, но пока без событий (у всех счетчик 0)"
 					},
 					"response": []
 				}
@@ -455,7 +460,8 @@
 								"1",
 								"events"
 							]
-						}
+						},
+						"description": "Координаты события лежат внутри окружности 2х локаций: \"г. Москва\" и \"Парк Горького\""
 					},
 					"response": []
 				},
@@ -500,7 +506,8 @@
 								"1",
 								"events"
 							]
-						}
+						},
+						"description": "Координаты события лежат внутри окружности 2х локаций: \"г. Москва\" и \"Парк Горького\""
 					},
 					"response": []
 				},
@@ -545,7 +552,8 @@
 								"1",
 								"events"
 							]
-						}
+						},
+						"description": "Координаты события лежат внутри окружности 2х локаций: \"г. Москва\" и \"Театр\""
 					},
 					"response": []
 				},
@@ -556,7 +564,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Событие добавляется в локации 1 (Москва) и 3 (Театр)\", function () {",
+									"pm.test(\"Событие добавляется новую локацию 6\", function () {",
 									"    const response = pm.response.json();",
 									"    pm.response.to.be.withBody;",
 									"    pm.response.to.be.json;    ",
@@ -590,7 +598,214 @@
 								"1",
 								"events"
 							]
+						},
+						"description": "Добавляется событие в новой локации, не добавленной администратором"
+					},
+					"response": []
+				},
+				{
+					"name": "11. Получение списка (0 PUBLISHED событий)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/locations?from=0&size=1000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"locations"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1000"
+								}
+							]
+						},
+						"description": "При просмотре событий пользователи видят только PUBLISHED события"
+					},
+					"response": []
+				},
+				{
+					"name": "12. Администратор меняет статус события 1 на PUBLISHED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
 						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stateAction\": \"PUBLISH_EVENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/events/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"events",
+								"1"
+							]
+						},
+						"description": "Админ. публикует событие 1"
+					},
+					"response": []
+				},
+				{
+					"name": "13. Администратор меняет статус события 2 на PUBLISHED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stateAction\": \"PUBLISH_EVENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/events/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"events",
+								"2"
+							]
+						},
+						"description": "Админ. публикует событие 2"
+					},
+					"response": []
+				},
+				{
+					"name": "14. Администратор меняет статус события 3 на PUBLISHED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stateAction\": \"PUBLISH_EVENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/events/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"events",
+								"3"
+							]
+						},
+						"description": "Админ. публикует событие 3"
+					},
+					"response": []
+				},
+				{
+					"name": "15. Администратор меняет статус события 4 на PUBLISHED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stateAction\": \"PUBLISH_EVENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/events/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"events",
+								"4"
+							]
+						},
+						"description": "Админ. публикует событие 4"
 					},
 					"response": []
 				}
@@ -600,13 +815,13 @@
 			"name": "Get lists of events in locations",
 			"item": [
 				{
-					"name": "11. Получение списка всех локаций и обновленных счетчиков",
+					"name": "16. Получение списка всех локаций и обновленных счетчиков",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200 or 201 and response is an array of size 2\", function () {",
+									"pm.test(\"Status code is 200 or 201 and response is an array of size 3\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
 									"    pm.expect(pm.response.json()).is.an('array');",
 									"    pm.expect(pm.response.json()).to.have.length(3);",
@@ -625,7 +840,7 @@
 									"    pm.expect(body[1].name, 'Location 2 name must be \"Парк Горького\"').to.equal(\"Парк Горького\");",
 									"    pm.expect(body[1].events, 'Location 2 events must be 0').to.equal(2);",
 									"});",
-									"pm.test(\"Test second element in locations array\", function () {",
+									"pm.test(\"Test third element in locations array\", function () {",
 									"    const body = pm.response.json();",
 									"    pm.expect(body[2], 'Location 2 must have property \"name\"').to.have.property(\"name\");",
 									"    pm.expect(body[2], 'Location 2 must have property \"events\"').to.have.property(\"events\");",
@@ -660,18 +875,19 @@
 									"value": "1000"
 								}
 							]
-						}
+						},
+						"description": "Показываются локации добавленные (подтвержденные) админом и обновленные счетчики по PUBLISHED событиям"
 					},
 					"response": []
 				},
 				{
-					"name": "12. Получение списка всех событий в локации 2 (Парк Горького)",
+					"name": "17. Получение списка всех событий в локации 2 (Парк Горького)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200 or 201 and response is an array of size 2\", function () {",
+									"pm.test(\"Status code is 200 or 201 and response is an array of size 1\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
 									"    pm.expect(pm.response.json()).is.an('array');",
 									"    pm.expect(pm.response.json()).to.have.length(1);",
@@ -696,12 +912,56 @@
 								"3",
 								"locations"
 							]
-						}
+						},
+						"description": "Показываются два PUBLISHED события в Парке Горького"
 					},
 					"response": []
 				},
 				{
-					"name": "13. Обновление локации администратором - Санкт Петербург",
+					"name": "18. Обновление локации администратором - Санкт Петербург",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); ",
+									"});",
+									"pm.test(\"Has location create response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test location 'name' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('name');",
+									"    pm.expect(response.name, '\"name\" must be \"г. Санкт Петербург\"').to.eql(\"г. Санкт Петербург\");",
+									"});",
+									"pm.test(\"Test location 'lat' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lat');",
+									"    pm.expect(response.lat, '\"lat\" must be 59.938784').to.eql(59.938784);",
+									"});",
+									"",
+									"pm.test(\"Test location 'lon' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lon');",
+									"    pm.expect(response.lon, '\"lat\" must be 30.314997').to.eql(30.314997);",
+									"});",
+									"pm.test(\"Test location 'rad' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('rad');",
+									"    pm.expect(response.rad, '\"rad\" must be 14').to.eql(14.0);",
+									"});",
+									"pm.test(\"Test location 'status' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('status');",
+									"    pm.expect(response.status, '\"status\" must be \"APPROVED_BY_ADMIN\"').to.eql('APPROVED_BY_ADMIN');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "PATCH",
 						"header": [],
@@ -725,6 +985,202 @@
 								"admin",
 								"locations",
 								"6"
+							]
+						},
+						"description": "Администратор обновляет (одобряет) локацию \"г. Санкт Петербург\", теперь она видна в списке локаций и обновляется вместе со счетчиком"
+					},
+					"response": []
+				},
+				{
+					"name": "19. При обновлении несуществующей локации выдается ошибка 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.expect(pm.response.code).to.equal(404);",
+									"});",
+									"pm.test(\"Has error response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"г. Санкт Петербург\",\n    \"rad\": 14.0,\n    \"status\": \"APPROVED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/locations/666",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"666"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "20. Получение списка всех локаций и обновленных счетчиков (вместе с Санкт Петербургом)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201 and response is an array of size 4\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    pm.expect(pm.response.json()).is.an('array');",
+									"    pm.expect(pm.response.json()).to.have.length(4);",
+									"});",
+									"pm.test(\"Test first element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[0], 'Location 1 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[0], 'Location 1 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[0].name, 'Location 1 name must be \"г. Москва\"').to.equal(\"г. Москва\");",
+									"    pm.expect(body[0].events, 'Location 1 events must be 0').to.equal(3);",
+									"});",
+									"pm.test(\"Test second element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[1], 'Location 2 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[1], 'Location 2 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[1].name, 'Location 2 name must be \"Парк Горького\"').to.equal(\"Парк Горького\");",
+									"    pm.expect(body[1].events, 'Location 2 events must be 0').to.equal(2);",
+									"});",
+									"pm.test(\"Test third element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[2], 'Location 3 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[2], 'Location 3 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[2].name, 'Location 3 name must be \"Театр\"').to.equal(\"Театр\");",
+									"    pm.expect(body[2].events, 'Location 3 events must be 0').to.equal(1);",
+									"});",
+									"pm.test(\"Test forth element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[3], 'Location 4 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[3], 'Location 4 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[3].name, 'Location 4 name must be \"г. Санкт Петербург\"').to.equal(\"г. Санкт Петербург\");",
+									"    pm.expect(body[3].events, 'Location 4 events must be 0').to.equal(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/locations?from=0&size=1000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"locations"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1000"
+								}
+							]
+						},
+						"description": "Так же как раньше, но добавился СПб"
+					},
+					"response": []
+				},
+				{
+					"name": "21. Получение списка всех событий в локации 4 (Санкт Петербург)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201 and response is an array of size 1\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    pm.expect(pm.response.json()).is.an('array');",
+									"    pm.expect(pm.response.json()).to.have.length(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/events/6/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"events",
+								"6",
+								"locations"
+							]
+						},
+						"description": "Выводим событие добавленное в СПб"
+					},
+					"response": []
+				},
+				{
+					"name": "22. При запросе несуществующей локации выдается ошибка 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.expect(pm.response.code).to.equal(404);",
+									"});",
+									"pm.test(\"Has error response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/events/666/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"events",
+								"666",
+								"locations"
 							]
 						}
 					},
