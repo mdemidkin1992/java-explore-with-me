@@ -441,7 +441,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в двух локациях – Парке Горького в городе Москва\",\n    \"category\": 1,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Парке Горького в городе Москва.\",\n    \"eventDate\": \"2023-08-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.728535,\n        \"lon\": 37.599032\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Концерт в Парке Горького\"\n}",
+							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в двух локациях – Парке Горького в городе Москва\",\n    \"category\": 120,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Парке Горького в городе Москва.\",\n    \"eventDate\": \"2023-08-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.728535,\n        \"lon\": 37.599032\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Концерт в Парке Горького\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -449,7 +449,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/1/events",
+							"raw": "http://localhost:8080/users/135/events",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -457,7 +457,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"135",
 								"events"
 							]
 						},
@@ -487,7 +487,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"annotation\": \"Второе событие, которое происходит в двух локациях – Парке Горького в городе Москва\",\n    \"category\": 1,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Парке Горького в городе Москва.\",\n    \"eventDate\": \"2023-09-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.728418,\n        \"lon\": 37.597732\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title 2\"\n}",
+							"raw": "{\n    \"annotation\": \"Второе событие, которое происходит в двух локациях – Парке Горького в городе Москва\",\n    \"category\": 120,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Парке Горького в городе Москва.\",\n    \"eventDate\": \"2023-09-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.728418,\n        \"lon\": 37.597732\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title 2\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -495,7 +495,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/1/events",
+							"raw": "http://localhost:8080/users/135/events",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -503,7 +503,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"135",
 								"events"
 							]
 						},
@@ -533,7 +533,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в двух локациях – Театре и в городе Москва\",\n    \"category\": 1,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Театре и в городе Москва\",\n    \"eventDate\": \"2023-10-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.7615890,\n        \"lon\": 37.6034350\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title\"\n}",
+							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в двух локациях – Театре и в городе Москва\",\n    \"category\": 120,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Театре и в городе Москва\",\n    \"eventDate\": \"2023-10-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.7615890,\n        \"lon\": 37.6034350\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -541,7 +541,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/1/events",
+							"raw": "http://localhost:8080/users/135/events",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -549,7 +549,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"135",
 								"events"
 							]
 						},
@@ -579,7 +579,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в городе Санкт-Петербурге (локация не была добавлена админом)\",\n    \"category\": 1,\n    \"description\": \"Описание первого события, которое происходит в городе Санкт-Петербурге (локация не была добавлена админом)\",\n    \"eventDate\": \"2023-10-30 15:30:00\",\n    \"location\": {\n        \"lat\": 59.938784,\n        \"lon\": 30.314997\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title\"\n}",
+							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в городе Санкт-Петербурге (локация не была добавлена админом)\",\n    \"category\": 120,\n    \"description\": \"Описание первого события, которое происходит в городе Санкт-Петербурге (локация не была добавлена админом)\",\n    \"eventDate\": \"2023-10-30 15:30:00\",\n    \"location\": {\n        \"lat\": 59.938784,\n        \"lon\": 30.314997\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -587,7 +587,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/1/events",
+							"raw": "http://localhost:8080/users/135/events",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -595,7 +595,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"135",
 								"events"
 							]
 						},
@@ -661,7 +661,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/admin/events/1",
+							"raw": "http://localhost:8080/admin/events/106",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -670,7 +670,7 @@
 							"path": [
 								"admin",
 								"events",
-								"1"
+								"106"
 							]
 						},
 						"description": "Админ. публикует событие 1"
@@ -705,7 +705,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/admin/events/2",
+							"raw": "http://localhost:8080/admin/events/107",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -714,7 +714,7 @@
 							"path": [
 								"admin",
 								"events",
-								"2"
+								"107"
 							]
 						},
 						"description": "Админ. публикует событие 2"
@@ -749,7 +749,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/admin/events/3",
+							"raw": "http://localhost:8080/admin/events/108",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -758,7 +758,7 @@
 							"path": [
 								"admin",
 								"events",
-								"3"
+								"108"
 							]
 						},
 						"description": "Админ. публикует событие 3"
@@ -793,7 +793,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/admin/events/4",
+							"raw": "http://localhost:8080/admin/events/109",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -802,7 +802,7 @@
 							"path": [
 								"admin",
 								"events",
-								"4"
+								"109"
 							]
 						},
 						"description": "Админ. публикует событие 4"
@@ -901,7 +901,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/events/3/locations",
+							"raw": "http://localhost:8080/events/108/locations",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -909,7 +909,7 @@
 							"port": "8080",
 							"path": [
 								"events",
-								"3",
+								"108",
 								"locations"
 							]
 						},
@@ -975,7 +975,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/admin/locations/6",
+							"raw": "http://localhost:8080/admin/locations/111",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -984,7 +984,7 @@
 							"path": [
 								"admin",
 								"locations",
-								"6"
+								"111"
 							]
 						},
 						"description": "Администратор обновляет (одобряет) локацию \"г. Санкт Петербург\", теперь она видна в списке локаций и обновляется вместе со счетчиком"
@@ -1132,7 +1132,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/events/6/locations",
+							"raw": "http://localhost:8080/events/111/locations",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1140,7 +1140,7 @@
 							"port": "8080",
 							"path": [
 								"events",
-								"6",
+								"111",
 								"locations"
 							]
 						},
