@@ -42,8 +42,6 @@ public class LocationServiceImpl implements LocationService {
     public List<LocationDtoWithEvents> getLocations(int from, int size) {
         Pageable page = PageRequest.of(from / size, size);
 
-        // Возвращает список локаций, добавленных администратором,
-        // вместе с количеством событий в них
         List<Location> locations = locationRepository.findAllByNameNotNull(page);
         List<LocationDtoWithEvents> response = new ArrayList<>();
 

@@ -73,8 +73,9 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         Location location = getExistingLocationOrCreateNewOne(newEventDto);
         request.setLocation(location);
 
-        List<Location> locationList = getClosestLocations(newEventDto);
-        request.setLocationList(locationList);
+        Set<Location> locationList = getClosestLocations(newEventDto);
+        locationList.add(location);
+        request.setLocationList(new ArrayList<>(locationList));
 
         Event response = eventRepository.save(request);
         return EventMapper.mapEventFullDtoFromEntity(response);
@@ -317,8 +318,6 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         Pageable page = PageRequest.of(from / size, size, Sort.by("eventDate").descending());
         Location location = getExistingLocationOrThrowException(locationId);
 
-//        List<Event> eventList2 = location.getEventList();
-
         List<Event> eventList = eventRepository.findEventsWithLocationRadius(
                 location.getLat(),
                 location.getLon(),
@@ -327,7 +326,6 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         );
 
         return EventMapper.mapToEventShortDto(eventList);
-//        return EventMapper.mapToEventShortDto(eventList2);
     }
 
     private int getConfirmedRequests(long id) {
@@ -364,14 +362,12 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         );
     }
 
-    private List<Location> getClosestLocations(NewEventDto newEventDto) {
+    private Set<Location> getClosestLocations(NewEventDto newEventDto) {
         NewCoordinatesDto coordinates = newEventDto.getLocation();
         Double lat = coordinates.getLat();
         Double lon = coordinates.getLon();
 
-        // Проверяем ближайшие локации, в радиус которых попадает точка события
-        // Все они станут геолокационными тегами этого события
-        return locationRepository.findLocationsWithinRadius(lat, lon, LocationStatus.APPROVED_BY_ADMIN);
+        return new HashSet<>(locationRepository.findLocationsWithinRadius(lat, lon));
     }
 
     private Location getExistingLocationOrCreateNewOne(NewEventDto newEventDto) {
@@ -379,7 +375,6 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         Double lat = coordinates.getLat();
         Double lon = coordinates.getLon();
 
-        // Если такой локации еще нет в базе – добавляем новую локацию
         if (!locationRepository.existsByLatAndLon(lat, lon)) {
             Location newLocation = LocationMapper.mapFromLocationShortDto(coordinates);
             newLocation.setStatus(LocationStatus.SUGGESTED_BY_USER);
@@ -387,7 +382,6 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         } else {
             return locationRepository.findByLatAndLon(lat, lon);
         }
-
     }
 
     private Location getExistingLocationOrThrowException(long locationId) {

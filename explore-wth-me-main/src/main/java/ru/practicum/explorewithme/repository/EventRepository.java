@@ -36,11 +36,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findAllByCategoryId(long catId);
 
-    List<Event> findAllByLocationId(long locationId);
 
     @Query("SELECT e FROM Event e " +
             "WHERE FUNCTION('distance', :lat, :lon, e.location.lat, e.location.lon) " +
             "<= :rad " +
             "ORDER BY e.eventDate DESC ")
     List<Event> findEventsWithLocationRadius(Double lat, Double lon, Double rad, Pageable pageable);
+
 }
