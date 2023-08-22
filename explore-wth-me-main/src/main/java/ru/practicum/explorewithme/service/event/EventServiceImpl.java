@@ -322,6 +322,7 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
                 location.getLat(),
                 location.getLon(),
                 location.getRad(),
+                EventState.PUBLISHED,
                 page
         );
 

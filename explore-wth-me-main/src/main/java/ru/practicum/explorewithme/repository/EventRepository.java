@@ -40,7 +40,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e " +
             "WHERE FUNCTION('distance', :lat, :lon, e.location.lat, e.location.lon) " +
             "<= :rad " +
+            "AND e.state = :state " +
             "ORDER BY e.eventDate DESC ")
-    List<Event> findEventsWithLocationRadius(Double lat, Double lon, Double rad, Pageable pageable);
+    List<Event> findEventsWithLocationRadius(Double lat, Double lon, Double rad, EventState state, Pageable pageable);
 
 }

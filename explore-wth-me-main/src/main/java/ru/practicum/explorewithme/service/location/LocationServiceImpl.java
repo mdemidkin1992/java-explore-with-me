@@ -10,7 +10,9 @@ import ru.practicum.explorewithme.dto.location.LocationUpdateRequest;
 import ru.practicum.explorewithme.dto.location.NewLocationDtoAdmin;
 import ru.practicum.explorewithme.dto.location.LocationDtoWithEvents;
 import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
+import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.Location;
+import ru.practicum.explorewithme.model.enums.EventState;
 import ru.practicum.explorewithme.model.enums.LocationStatus;
 import ru.practicum.explorewithme.repository.LocationRepository;
 import ru.practicum.explorewithme.util.exception.ClientErrorException;
@@ -47,7 +49,12 @@ public class LocationServiceImpl implements LocationService {
 
         for (Location location : locations) {
             String locationName = location.getName();
-            long eventsCount = location.getEventList().size();
+            List<Event> eventList = location.getEventList();
+
+            long eventsCount = eventList.stream()
+                    .filter(e -> e.getState().equals(EventState.PUBLISHED))
+                    .count();
+
             response.add(new LocationDtoWithEvents(locationName, eventsCount));
         }
 
