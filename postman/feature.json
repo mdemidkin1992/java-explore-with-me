@@ -1,0 +1,736 @@
+{
+	"info": {
+		"_postman_id": "a7c6335d-44f1-4f36-823f-47fbe8a39b0e",
+		"name": "Test feature_ location_processing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29196251"
+	},
+	"item": [
+		{
+			"name": "Add locations",
+			"item": [
+				{
+					"name": "0. Добавление базовой локации (город)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); ",
+									"});",
+									"pm.test(\"Has location create response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test location 'name' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('name');",
+									"    pm.expect(response.name, '\"name\" must be \"г. Москва\"').to.eql(\"г. Москва\");",
+									"});",
+									"pm.test(\"Test location 'lat' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lat');",
+									"    pm.expect(response.lat, '\"lat\" must be 55.753995').to.eql(55.753995);",
+									"});",
+									"pm.test(\"Test location 'lon' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lon');",
+									"    pm.expect(response.lon, '\"lat\" must be 37.614069').to.eql(37.614069);",
+									"});",
+									"pm.test(\"Test location 'rad' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('rad');",
+									"    pm.expect(response.rad, '\"rad\" must be 28').to.eql(28.0);",
+									"});",
+									"pm.test(\"Test location 'status' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('status');",
+									"    pm.expect(response.status, '\"status\" must be \"APPROVED_BY_ADMIN\"').to.eql('APPROVED_BY_ADMIN');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"г. Москва\",\n    \"lat\": 55.753995,\n    \"lon\": 37.614069,\n    \"rad\": 28.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Добавление новой локации администратором",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); ",
+									"});",
+									"pm.test(\"Has location create response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test location 'name' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('name');",
+									"    pm.expect(response.name, '\"name\" must be \"Парк Горького\"').to.eql(\"Парк Горького\");",
+									"});",
+									"pm.test(\"Test location 'lat' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lat');",
+									"    pm.expect(response.lat, '\"lat\" must be 55.729949').to.eql(55.729949);",
+									"});",
+									"pm.test(\"Test location 'lon' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lon');",
+									"    pm.expect(response.lon, '\"lat\" must be 37.601735').to.eql(37.601735);",
+									"});",
+									"pm.test(\"Test location 'rad' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('rad');",
+									"    pm.expect(response.rad, '\"rad\" must be 2.0').to.eql(2.0);",
+									"});",
+									"pm.test(\"Test location 'status' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('status');",
+									"    pm.expect(response.status, '\"status\" must be \"APPROVED_BY_ADMIN\"').to.eql('APPROVED_BY_ADMIN');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Парк Горького\",\n    \"lat\": 55.729949,\n    \"lon\": 37.601735,\n    \"rad\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Повторное добавление локации администратором (ошибка 409)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {",
+									"    pm.expect(pm.response.code).to.equal(409);",
+									"});",
+									"pm.test(\"Has error response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Парк Горького\",\n    \"lat\": 55.729949,\n    \"lon\": 37.601735,\n    \"rad\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Добавление второй локации администратором",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); ",
+									"});",
+									"pm.test(\"Has location create response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test location 'name' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('name');",
+									"    pm.expect(response.name, '\"name\" must be \"Театр\"').to.eql(\"Театр\");",
+									"});",
+									"pm.test(\"Test location 'lat' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lat');",
+									"    pm.expect(response.lat, '\"lat\" must be 55.7615890').to.eql(55.7615890);",
+									"});",
+									"pm.test(\"Test location 'lon' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lon');",
+									"    pm.expect(response.lon, '\"lat\" must be 37.6034350').to.eql(37.6034350);",
+									"});",
+									"pm.test(\"Test location 'rad' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('rad');",
+									"    pm.expect(response.rad, '\"rad\" must be 0.0').to.eql(0.0);",
+									"});",
+									"pm.test(\"Test location 'status' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('status');",
+									"    pm.expect(response.status, '\"status\" must be \"APPROVED_BY_ADMIN\"').to.eql('APPROVED_BY_ADMIN');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Театр\",\n    \"lat\": 55.7615890,\n    \"lon\": 37.6034350,\n    \"rad\": 0.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Получение списка всех локаций без событий",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201 and response is an array of size 2\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    pm.expect(pm.response.json()).is.an('array');",
+									"    pm.expect(pm.response.json()).to.have.length(3);",
+									"});",
+									"pm.test(\"Test first element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[0], 'Location 1 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[0], 'Location 1 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[0].name, 'Location 1 name must be \"г. Москва\"').to.equal(\"г. Москва\");",
+									"    pm.expect(body[0].events, 'Location 1 events must be 0').to.equal(0);",
+									"});",
+									"pm.test(\"Test second element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[1], 'Location 2 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[1], 'Location 2 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[1].name, 'Location 2 name must be \"Парк Горького\"').to.equal(\"Парк Горького\");",
+									"    pm.expect(body[1].events, 'Location 2 events must be 0').to.equal(0);",
+									"});",
+									"pm.test(\"Test second element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[2], 'Location 2 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[2], 'Location 2 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[2].name, 'Location 2 name must be \"Театр\"').to.equal(\"Театр\");",
+									"    pm.expect(body[2].events, 'Location 3 events must be 0').to.equal(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"locations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Add users / events",
+			"item": [
+				{
+					"name": "5. Администратор добавляет пользователя",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 201\", function () {",
+									"    pm.expect(pm.response.code).to.equal(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New User\",\n    \"email\": \"newuser@email.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Администратор добавляет категорию",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 201\", function () {",
+									"    pm.expect(pm.response.code).to.equal(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Фильмы\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Пользователь добавляет 1 событие в Парке Горького",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Событие добавляется в локации 1 (Москва) и 2 (ПГ)\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в двух локациях – Парке Горького в городе Москва\",\n    \"category\": 1,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Парке Горького в городе Москва.\",\n    \"eventDate\": \"2023-08-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.728535,\n        \"lon\": 37.599032\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Концерт в Парке Горького\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8. Пользователь добавляет 2 событие в Парке Горького",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Событие добавляется в локации 1 (Москва) и 2 (ПГ)\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"annotation\": \"Второе событие, которое происходит в двух локациях – Парке Горького в городе Москва\",\n    \"category\": 1,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Парке Горького в городе Москва.\",\n    \"eventDate\": \"2023-09-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.728418,\n        \"lon\": 37.597732\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title 2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9. Пользователь добавляет событие в локацию Театр",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Событие добавляется в локации 1 (Москва) и 3 (Театр)\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в двух локациях – Театре и в городе Москва\",\n    \"category\": 1,\n    \"description\": \"Описание первого события, которое происходит в двух локациях – Театре и в городе Москва\",\n    \"eventDate\": \"2023-10-30 15:30:00\",\n    \"location\": {\n        \"lat\": 55.7615890,\n        \"lon\": 37.6034350\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "10. Пользователь добавляет событие в новую локацию (еще не добавленную админом)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Событие добавляется в локации 1 (Москва) и 3 (Театр)\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"annotation\": \"Первое событие, которое происходит в городе Санкт-Петербурге (локация не была добавлена админом)\",\n    \"category\": 1,\n    \"description\": \"Описание первого события, которое происходит в городе Санкт-Петербурге (локация не была добавлена админом)\",\n    \"eventDate\": \"2023-10-30 15:30:00\",\n    \"location\": {\n        \"lat\": 59.938784,\n        \"lon\": 30.314997\n    },\n    \"paid\": true,\n    \"participantLimit\": 100,\n    \"requestModeration\": false,\n    \"title\": \"Sample Event Title\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get lists of events in locations",
+			"item": [
+				{
+					"name": "11. Получение списка всех локаций и обновленных счетчиков",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201 and response is an array of size 2\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    pm.expect(pm.response.json()).is.an('array');",
+									"    pm.expect(pm.response.json()).to.have.length(3);",
+									"});",
+									"pm.test(\"Test first element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[0], 'Location 1 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[0], 'Location 1 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[0].name, 'Location 1 name must be \"г. Москва\"').to.equal(\"г. Москва\");",
+									"    pm.expect(body[0].events, 'Location 1 events must be 0').to.equal(3);",
+									"});",
+									"pm.test(\"Test second element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[1], 'Location 2 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[1], 'Location 2 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[1].name, 'Location 2 name must be \"Парк Горького\"').to.equal(\"Парк Горького\");",
+									"    pm.expect(body[1].events, 'Location 2 events must be 0').to.equal(2);",
+									"});",
+									"pm.test(\"Test second element in locations array\", function () {",
+									"    const body = pm.response.json();",
+									"    pm.expect(body[2], 'Location 2 must have property \"name\"').to.have.property(\"name\");",
+									"    pm.expect(body[2], 'Location 2 must have property \"events\"').to.have.property(\"events\");",
+									"    pm.expect(body[2].name, 'Location 2 name must be \"Театр\"').to.equal(\"Театр\");",
+									"    pm.expect(body[2].events, 'Location 3 events must be 0').to.equal(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/locations?from=0&size=1000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"locations"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "12. Получение списка всех событий в локации 2 (Парк Горького)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201 and response is an array of size 2\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    pm.expect(pm.response.json()).is.an('array');",
+									"    pm.expect(pm.response.json()).to.have.length(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/events/3/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"events",
+								"3",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "13. Обновление локации администратором - Санкт Петербург",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"г. Санкт Петербург\",\n    \"rad\": 14.0,\n    \"status\": \"APPROVED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/locations/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

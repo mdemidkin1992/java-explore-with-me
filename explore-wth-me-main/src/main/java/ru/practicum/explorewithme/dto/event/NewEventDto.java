@@ -3,8 +3,7 @@ package ru.practicum.explorewithme.dto.event;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import ru.practicum.explorewithme.dto.event.annotations.DateTime;
-import ru.practicum.explorewithme.dto.location.LocationDtoUser;
-import ru.practicum.explorewithme.model.Location;
+import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -26,7 +25,7 @@ public class NewEventDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @NotNull
-    private LocationDtoUser location;
+    private NewCoordinatesDto location;
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;

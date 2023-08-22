@@ -5,6 +5,8 @@ import ru.practicum.explorewithme.dto.category.mapper.CategoryMapper;
 import ru.practicum.explorewithme.dto.event.EventFullDto;
 import ru.practicum.explorewithme.dto.event.EventShortDto;
 import ru.practicum.explorewithme.dto.event.NewEventDto;
+import ru.practicum.explorewithme.dto.location.CoordinatesResponseDto;
+import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
 import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
 import ru.practicum.explorewithme.dto.user.mapper.UserMapper;
 import ru.practicum.explorewithme.model.Category;
@@ -31,6 +33,13 @@ public class EventMapper {
     }
 
     public EventFullDto mapEventFullDtoFromEntity(Event event) {
+        CoordinatesResponseDto location =
+                CoordinatesResponseDto.builder()
+                        .id(event.getLocation().getId())
+                        .lon(event.getLocation().getLon())
+                        .lat(event.getLocation().getLat())
+                        .build();
+
         return EventFullDto.builder()
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.mapDtoFromEntity(event.getCategory()))
@@ -39,7 +48,7 @@ public class EventMapper {
                 .eventDate(event.getEventDate())
                 .id(event.getId())
                 .initiator(UserMapper.mapToUserShortDto(event.getInitiator()))
-                .location(event.getLocation())
+                .location(location)
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
                 .publishedOn(event.getPublishedOn())

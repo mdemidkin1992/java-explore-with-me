@@ -3,7 +3,6 @@ package ru.practicum.explorewithme.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.lang.Nullable;
 import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.enums.EventState;
@@ -41,7 +40,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e " +
             "WHERE FUNCTION('distance', :lat, :lon, e.location.lat, e.location.lon) " +
-            "<= e.location.rad " +
+            "<= :rad " +
             "ORDER BY e.eventDate DESC ")
-    List<Event> findEventsWithLocationRadius(Double lat, Double lon, Pageable pageable);
+    List<Event> findEventsWithLocationRadius(Double lat, Double lon, Double rad, Pageable pageable);
 }

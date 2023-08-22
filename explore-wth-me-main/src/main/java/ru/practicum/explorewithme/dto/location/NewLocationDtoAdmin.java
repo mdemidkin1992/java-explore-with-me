@@ -18,5 +18,4 @@ public class NewLocationDtoAdmin {
     private Double lon;
     @Min(0)
     private Double rad;
-    private Long id;
 }

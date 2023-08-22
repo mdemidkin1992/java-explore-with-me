@@ -3,7 +3,7 @@ package ru.practicum.explorewithme.dto.location.mapper;
 import lombok.experimental.UtilityClass;
 import ru.practicum.explorewithme.dto.location.LocationDto;
 import ru.practicum.explorewithme.dto.location.NewLocationDtoAdmin;
-import ru.practicum.explorewithme.dto.location.LocationDtoUser;
+import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
 import ru.practicum.explorewithme.model.Location;
 
 @UtilityClass
@@ -18,21 +18,10 @@ public class LocationMapper {
                 .build();
     }
 
-    public NewLocationDtoAdmin mapFromEntityToDto(Location entity) {
-        return NewLocationDtoAdmin.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .lon(entity.getLon())
-                .lat(entity.getLat())
-                .rad(entity.getRad())
-                .build();
-    }
-
-    public Location mapFromLocationShortDto(LocationDtoUser dto) {
+    public Location mapFromLocationShortDto(NewCoordinatesDto dto) {
         return Location.builder()
                 .lat(dto.getLat())
                 .lon(dto.getLon())
-                .rad(dto.getRad() != null ? dto.getRad() : 0.0)
                 .build();
     }
 

@@ -13,7 +13,7 @@ import ru.practicum.explorewithme.dto.event.EventShortDto;
 import ru.practicum.explorewithme.dto.event.NewEventDto;
 import ru.practicum.explorewithme.dto.event.UpdateEventUserRequest;
 import ru.practicum.explorewithme.dto.event.mapper.EventMapper;
-import ru.practicum.explorewithme.dto.location.LocationDtoUser;
+import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
 import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
 import ru.practicum.explorewithme.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.explorewithme.dto.request.EventRequestStatusUpdateResult;
@@ -70,8 +70,11 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         request.setCreatedOn(LocalDateTime.now());
         request.setState(EventState.PENDING);
 
-        Location location = checkIfExistsAndReturnLocation(newEventDto.getLocation());
+        Location location = getExistingLocationOrCreateNewOne(newEventDto);
         request.setLocation(location);
+
+        List<Location> locationList = getClosestLocations(newEventDto);
+        request.setLocationList(locationList);
 
         Event response = eventRepository.save(request);
         return EventMapper.mapEventFullDtoFromEntity(response);
@@ -313,8 +316,18 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
     public List<EventShortDto> getEventsInLocation(long locationId, int from, int size) {
         Pageable page = PageRequest.of(from / size, size, Sort.by("eventDate").descending());
         Location location = getExistingLocationOrThrowException(locationId);
-        List<Event> eventList = eventRepository.findEventsWithLocationRadius(location.getLat(), location.getLon(), page);
+
+//        List<Event> eventList2 = location.getEventList();
+
+        List<Event> eventList = eventRepository.findEventsWithLocationRadius(
+                location.getLat(),
+                location.getLon(),
+                location.getRad(),
+                page
+        );
+
         return EventMapper.mapToEventShortDto(eventList);
+//        return EventMapper.mapToEventShortDto(eventList2);
     }
 
     private int getConfirmedRequests(long id) {
@@ -351,17 +364,30 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         );
     }
 
-    private Location checkIfExistsAndReturnLocation(LocationDtoUser locationDto) {
-        Double lat = locationDto.getLat();
-        Double lon = locationDto.getLon();
+    private List<Location> getClosestLocations(NewEventDto newEventDto) {
+        NewCoordinatesDto coordinates = newEventDto.getLocation();
+        Double lat = coordinates.getLat();
+        Double lon = coordinates.getLon();
 
-        if (locationRepository.existsByLatAndLon(lat, lon)) {
-            return locationRepository.findByLatAndLon(lat, lon);
-        } else {
-            Location newLocation = LocationMapper.mapFromLocationShortDto(locationDto);
+        // Проверяем ближайшие локации, в радиус которых попадает точка события
+        // Все они станут геолокационными тегами этого события
+        return locationRepository.findLocationsWithinRadius(lat, lon, LocationStatus.APPROVED_BY_ADMIN);
+    }
+
+    private Location getExistingLocationOrCreateNewOne(NewEventDto newEventDto) {
+        NewCoordinatesDto coordinates = newEventDto.getLocation();
+        Double lat = coordinates.getLat();
+        Double lon = coordinates.getLon();
+
+        // Если такой локации еще нет в базе – добавляем новую локацию
+        if (!locationRepository.existsByLatAndLon(lat, lon)) {
+            Location newLocation = LocationMapper.mapFromLocationShortDto(coordinates);
             newLocation.setStatus(LocationStatus.SUGGESTED_BY_USER);
             return locationRepository.save(newLocation);
+        } else {
+            return locationRepository.findByLatAndLon(lat, lon);
         }
+
     }
 
     private Location getExistingLocationOrThrowException(long locationId) {

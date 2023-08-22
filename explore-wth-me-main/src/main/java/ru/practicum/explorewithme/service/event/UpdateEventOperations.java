@@ -2,7 +2,7 @@ package ru.practicum.explorewithme.service.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.practicum.explorewithme.dto.event.UpdateEventUserRequest;
-import ru.practicum.explorewithme.dto.location.LocationDtoUser;
+import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
 import ru.practicum.explorewithme.model.Category;
 import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.Location;
@@ -37,8 +37,6 @@ public class UpdateEventOperations {
                 existingEvent.setEventDate(updateEventRequest.getEventDate());
             }
             if (updateEventRequest.getLocation() != null) {
-//                existingEvent.setLocation(updateEventRequest.getLocation());
-//                locationRepository.save(updateEventRequest.getLocation());
                 existingEvent.setLocation(updateLocation(existingEvent, updateEventRequest.getLocation()));
             }
             if (updateEventRequest.getPaid() != null) {
@@ -79,7 +77,7 @@ public class UpdateEventOperations {
         }
     }
 
-    private Location updateLocation(Event existingEvent, LocationDtoUser locationDtoUser) {
+    private Location updateLocation(Event existingEvent, NewCoordinatesDto locationDtoUser) {
         Double newLat = locationDtoUser.getLat();
         Double newLon = locationDtoUser.getLon();
         Location existingLocation = existingEvent.getLocation();

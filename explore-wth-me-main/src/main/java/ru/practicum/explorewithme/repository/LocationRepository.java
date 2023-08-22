@@ -11,16 +11,22 @@ import java.util.List;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
-    List<Location> findByStatusAndNameNotNull(LocationStatus status, Pageable pageable);
+    List<Location> findAllByNameNotNull(Pageable pageable);
 
-    @Query("SELECT l FROM Location l WHERE FUNCTION('distance', :lat, :lon, l.lat, l.lon) <= l.rad")
+    @Query("SELECT l FROM Location l " +
+            "WHERE FUNCTION('distance', :lat, :lon, l.lat, l.lon) <= l.rad " +
+            "AND l.status = :status " +
+            "ORDER BY FUNCTION('distance', :lat, :lon, l.lat, l.lon) ASC ")
     List<Location> findLocationsWithinRadius(
             @Param("lat") Double lat,
-            @Param("lon") Double lon
+            @Param("lon") Double lon,
+            @Param("status") LocationStatus status
     );
 
     Location findByLatAndLon(Double lat, Double lon);
 
     boolean existsByLatAndLon(Double lat, Double lon);
+
+    boolean existsByNameAndLatAndLon(String name, Double lat, Double lon);
 
 }

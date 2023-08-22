@@ -5,10 +5,9 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class LocationDtoUser {
+public class NewCoordinatesDto {
     @NotNull
     private Double lat;
     @NotNull
     private Double lon;
-    private Double rad;
 }

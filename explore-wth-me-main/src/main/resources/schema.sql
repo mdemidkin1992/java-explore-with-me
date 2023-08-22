@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS events CASCADE;
 DROP TABLE IF EXISTS requests CASCADE;
 DROP TABLE IF EXISTS compilations CASCADE;
 DROP TABLE IF EXISTS events_compilations CASCADE;
+DROP TABLE IF EXISTS events_locations CASCADE;
 
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
@@ -67,6 +68,13 @@ CREATE TABLE events_compilations (
     compilation_id BIGINT NOT NULL,
     CONSTRAINT fk_events_compilations_to_events FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
     CONSTRAINT fk_events_compilations_to_compilations FOREIGN KEY (compilation_id) REFERENCES compilations (id) ON DELETE CASCADE
+);
+
+CREATE TABLE events_locations (
+    event_id BIGINT NOT NULL,
+    location_id BIGINT NOT NULL,
+    CONSTRAINT fk_events_locations_to_events FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
+    CONSTRAINT fk_events_locations_to_locations FOREIGN KEY (location_id) REFERENCES locations (id) ON DELETE CASCADE
 );
 
 CREATE OR REPLACE FUNCTION distance(lat1 float, lon1 float, lat2 float, lon2 float)
