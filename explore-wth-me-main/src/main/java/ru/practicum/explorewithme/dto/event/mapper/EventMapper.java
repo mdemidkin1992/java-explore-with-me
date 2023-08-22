@@ -6,7 +6,6 @@ import ru.practicum.explorewithme.dto.event.EventFullDto;
 import ru.practicum.explorewithme.dto.event.EventShortDto;
 import ru.practicum.explorewithme.dto.event.NewEventDto;
 import ru.practicum.explorewithme.dto.location.CoordinatesResponseDto;
-import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
 import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
 import ru.practicum.explorewithme.dto.user.mapper.UserMapper;
 import ru.practicum.explorewithme.model.Category;

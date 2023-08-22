@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.explorewithme.dto.category.CategoryDto;
 import ru.practicum.explorewithme.dto.location.CoordinatesResponseDto;
-import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
 import ru.practicum.explorewithme.dto.user.UserShortDto;
-import ru.practicum.explorewithme.model.Location;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

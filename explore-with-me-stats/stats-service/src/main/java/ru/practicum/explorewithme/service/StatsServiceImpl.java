@@ -12,7 +12,6 @@ import ru.practicum.explorewithme.repository.StatsRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
