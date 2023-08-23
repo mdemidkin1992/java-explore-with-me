@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "af22cc24-3f87-466e-adae-5de2a3ec9024",
+		"_postman_id": "700ef21c-32c7-455e-a9ef-2aa5e4b69bb4",
 		"name": "Test feature_ location_processing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "29277374"
+		"_exporter_id": "29297576"
 	},
 	"item": [
 		{
@@ -901,7 +901,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/events/108/locations",
+							"raw": "http://localhost:8080/events/locations?locationId=108",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -909,8 +909,13 @@
 							"port": "8080",
 							"path": [
 								"events",
-								"108",
 								"locations"
+							],
+							"query": [
+								{
+									"key": "locationId",
+									"value": "108"
+								}
 							]
 						},
 						"description": "Показываются два PUBLISHED события в Парке Горького"
@@ -1132,7 +1137,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/events/111/locations",
+							"raw": "http://localhost:8080/events/locations?locationId=111",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1140,8 +1145,13 @@
 							"port": "8080",
 							"path": [
 								"events",
-								"111",
 								"locations"
+							],
+							"query": [
+								{
+									"key": "locationId",
+									"value": "111"
+								}
 							]
 						},
 						"description": "Выводим событие добавленное в СПб"
@@ -1171,7 +1181,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/events/666/locations",
+							"raw": "http://localhost:8080/events/locations?locationId=666",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1179,8 +1189,216 @@
 							"port": "8080",
 							"path": [
 								"events",
-								"666",
 								"locations"
+							],
+							"query": [
+								{
+									"key": "locationId",
+									"value": "666"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "23. Получение списка событиям по координатам (не по id локации)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201 and response is an array of size 1\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    pm.expect(pm.response.json()).is.an('array');",
+									"    pm.expect(pm.response.json()).to.have.length(3);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/events/locations?lat=55.753995&lon=37.614069&rad=28.0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"events",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "lat",
+									"value": "55.753995"
+								},
+								{
+									"key": "lon",
+									"value": "37.614069"
+								},
+								{
+									"key": "rad",
+									"value": "28.0"
+								},
+								{
+									"key": "locationId",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete locations",
+			"item": [
+				{
+					"name": "24. Админ добавляет новую локацию без привязки к событию",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); ",
+									"});",
+									"pm.test(\"Has location create response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test location 'name' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('name');",
+									"    pm.expect(response.name, '\"name\" must be \"г. Нижний Новгород\"').to.eql(\"г. Нижний Новгород\");",
+									"});",
+									"pm.test(\"Test location 'lat' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lat');",
+									"    pm.expect(response.lat, '\"lat\" must be 56.326797').to.eql(56.326797);",
+									"});",
+									"pm.test(\"Test location 'lon' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('lon');",
+									"    pm.expect(response.lon, '\"lat\" must be 44.006516').to.eql(44.006516);",
+									"});",
+									"pm.test(\"Test location 'rad' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('rad');",
+									"    pm.expect(response.rad, '\"rad\" must be 10').to.eql(10.0);",
+									"});",
+									"pm.test(\"Test location 'status' field\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('status');",
+									"    pm.expect(response.status, '\"status\" must be \"APPROVED_BY_ADMIN\"').to.eql('APPROVED_BY_ADMIN');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"г. Нижний Новгород\",\n    \"lat\": 56.326797,\n    \"lon\": 44.006516,\n    \"rad\": 10.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/admin/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "25. При удаленнии локации с событиями выдает ошибку 409",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {",
+									"    pm.expect(pm.response.code).to.equal(409);",
+									"});",
+									"pm.test(\"Has error response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/admin/locations/111",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"111"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "26. Тест успешного удаления локации без событий",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/admin/locations/112",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"112"
 							]
 						}
 					},
