@@ -15,4 +15,6 @@ public interface LocationService {
 
     LocationDto updateLocation(long id, LocationUpdateRequest request);
 
+    void deleteLocation(long locationId);
+
 }

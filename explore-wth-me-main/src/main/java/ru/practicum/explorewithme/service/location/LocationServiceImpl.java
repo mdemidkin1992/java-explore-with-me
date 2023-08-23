@@ -14,6 +14,7 @@ import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.Location;
 import ru.practicum.explorewithme.model.enums.EventState;
 import ru.practicum.explorewithme.model.enums.LocationStatus;
+import ru.practicum.explorewithme.repository.EventRepository;
 import ru.practicum.explorewithme.repository.LocationRepository;
 import ru.practicum.explorewithme.util.exception.ClientErrorException;
 import ru.practicum.explorewithme.util.exception.EntityNotFoundException;
@@ -28,6 +29,7 @@ import java.util.List;
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -66,7 +68,7 @@ public class LocationServiceImpl implements LocationService {
     @Transactional
     public LocationDto updateLocation(long id, LocationUpdateRequest request) {
         Location existingLocation = getLocationOrThrowException(id);
-        if (request.getStatus().equals("APPROVED")) {
+        if (String.valueOf(request.getStatus()).equals("APPROVED")) {
             existingLocation.setStatus(LocationStatus.APPROVED_BY_ADMIN);
 
             if (request.getName() != null) {
@@ -83,6 +85,14 @@ public class LocationServiceImpl implements LocationService {
         return LocationMapper.mapFullDtoFromEntity(updatedLocation);
     }
 
+    @Override
+    @Transactional
+    public void deleteLocation(long locationId) {
+        getLocationOrThrowException(locationId);
+        checkIfLocationTiedToEvents(locationId);
+        locationRepository.deleteById(locationId);
+    }
+
     private void checkIfLocationExistsOrThrowException(NewLocationDtoAdmin dto) {
         if (locationRepository.existsByNameAndLatAndLon(
             dto.getName(), dto.getLat(), dto.getLon()
@@ -95,6 +105,12 @@ public class LocationServiceImpl implements LocationService {
         return locationRepository.findById(locationId).orElseThrow(
                 () -> new EntityNotFoundException("Location not found")
         );
+    }
+
+    private void checkIfLocationTiedToEvents(long locationId) {
+        if (!eventRepository.findAllByLocationId(locationId).isEmpty()) {
+            throw new ClientErrorException("Conditions are not met");
+        }
     }
 
 }

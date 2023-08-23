@@ -314,17 +314,30 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventShortDto> getEventsInLocation(long locationId, int from, int size) {
+    public List<EventShortDto> getEventsInLocation(
+            Long locationId, Double lat, Double lon, Double rad, int from, int size
+    ) {
         Pageable page = PageRequest.of(from / size, size, Sort.by("eventDate").descending());
-        Location location = getExistingLocationOrThrowException(locationId);
+        List<Event> eventList;
 
-        List<Event> eventList = eventRepository.findEventsWithLocationRadius(
-                location.getLat(),
-                location.getLon(),
-                location.getRad(),
-                EventState.PUBLISHED,
-                page
-        );
+        if (locationId != null) {
+            Location location = getExistingLocationOrThrowException(locationId);
+            eventList = eventRepository.findEventsWithLocationRadius(
+                    location.getLat(),
+                    location.getLon(),
+                    location.getRad(),
+                    EventState.PUBLISHED,
+                    page
+            );
+        } else {
+            if (lat == null || lon == null) {
+                throw new ClientErrorException("Conditions are not met");
+            } else {
+                eventList = eventRepository.findEventsWithLocationRadius(
+                        lat, lon, rad, EventState.PUBLISHED, page
+                );
+            }
+        }
 
         return EventMapper.mapToEventShortDto(eventList);
     }

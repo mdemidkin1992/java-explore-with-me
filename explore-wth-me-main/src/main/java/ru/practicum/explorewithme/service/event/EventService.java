@@ -56,5 +56,5 @@ public interface EventService {
 
     EventFullDto getEvent(long eventId, String app, HttpServletRequest request);
 
-    List<EventShortDto> getEventsInLocation(long locationId, int from, int size);
+    List<EventShortDto> getEventsInLocation(Long locationId, Double lat, Double lon, Double rad, int from, int size);
 }

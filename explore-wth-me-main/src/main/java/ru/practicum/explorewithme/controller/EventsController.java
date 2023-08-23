@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.explorewithme.dto.event.EventFullDto;
@@ -13,10 +14,13 @@ import ru.practicum.explorewithme.service.event.EventService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/events")
@@ -61,14 +65,18 @@ public class EventsController {
         return response;
     }
 
-    @GetMapping(path = "/{locationId}/locations")
+    @GetMapping(path = "/locations")
     public List<EventShortDto> getEventsInLocation(
-            @PathVariable(name = "locationId") long locationId,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "10") int size
+            @RequestParam(required = false) @Positive Long locationId,
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lon,
+            @RequestParam(defaultValue = "0.0") double rad,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "10") @Positive int size
     ) {
         log.info("GET | Events in location");
-        List<EventShortDto> response = eventService.getEventsInLocation(locationId, from, size);
+        List<EventShortDto> response = eventService.getEventsInLocation(
+                locationId, lat, lon, rad, from, size);
         log.info("{}", response);
         return response;
     }

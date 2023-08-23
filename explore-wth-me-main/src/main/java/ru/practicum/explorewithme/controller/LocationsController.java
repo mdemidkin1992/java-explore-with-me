@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.explorewithme.dto.location.LocationDtoWithEvents;
 import ru.practicum.explorewithme.service.location.LocationService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
@@ -23,8 +25,8 @@ public class LocationsController {
 
     @GetMapping
     public List<LocationDtoWithEvents> getLocations(
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "10") @Positive int size
     ) {
         log.info("GET | Locations");
         List<LocationDtoWithEvents> response = locationService.getLocations(from, size);

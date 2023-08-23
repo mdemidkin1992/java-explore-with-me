@@ -43,4 +43,13 @@ public class AdminLocationsController {
         return response;
     }
 
+    @DeleteMapping(path = "/{locationId}")
+    public void deleteLocation(
+            @PathVariable(name = "locationId") long id
+    ) {
+        log.info("DELETE | Delete Location");
+        locationService.deleteLocation(id);
+        log.info("Delete Location successful");
+    }
+
 }

@@ -44,4 +44,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "ORDER BY e.eventDate DESC ")
     List<Event> findEventsWithLocationRadius(Double lat, Double lon, Double rad, EventState state, Pageable pageable);
 
+    List<Event> findAllByLocationId(long locationId);
 }
