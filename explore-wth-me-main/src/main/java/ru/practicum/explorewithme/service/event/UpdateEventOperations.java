@@ -2,8 +2,10 @@ package ru.practicum.explorewithme.service.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.practicum.explorewithme.dto.event.UpdateEventUserRequest;
+import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
 import ru.practicum.explorewithme.model.Category;
 import ru.practicum.explorewithme.model.Event;
+import ru.practicum.explorewithme.model.Location;
 import ru.practicum.explorewithme.model.enums.EventState;
 import ru.practicum.explorewithme.repository.CategoryRepository;
 import ru.practicum.explorewithme.repository.LocationRepository;
@@ -35,8 +37,7 @@ public class UpdateEventOperations {
                 existingEvent.setEventDate(updateEventRequest.getEventDate());
             }
             if (updateEventRequest.getLocation() != null) {
-                existingEvent.setLocation(updateEventRequest.getLocation());
-                locationRepository.save(updateEventRequest.getLocation());
+                existingEvent.setLocation(updateLocation(existingEvent, updateEventRequest.getLocation()));
             }
             if (updateEventRequest.getPaid() != null) {
                 existingEvent.setPaid(updateEventRequest.getPaid());
@@ -74,5 +75,14 @@ public class UpdateEventOperations {
                 existingEvent.setState(EventState.CANCELED);
             }
         }
+    }
+
+    private Location updateLocation(Event existingEvent, NewCoordinatesDto locationDtoUser) {
+        Double newLat = locationDtoUser.getLat();
+        Double newLon = locationDtoUser.getLon();
+        Location existingLocation = existingEvent.getLocation();
+        existingLocation.setLat(newLat);
+        existingLocation.setLon(newLon);
+        return locationRepository.save(existingLocation);
     }
 }

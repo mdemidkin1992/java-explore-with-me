@@ -10,7 +10,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>ru.practicum</groupId>
     <artifactId>explore-wth-me-main</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Explore with me Main</name>

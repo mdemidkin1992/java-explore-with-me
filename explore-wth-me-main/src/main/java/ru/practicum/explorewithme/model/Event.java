@@ -56,4 +56,12 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "compilation_id")
     )
     private List<Compilation> compilationList = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "events_locations",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id")
+    )
+    private List<Location> locationList = new ArrayList<>();
 }

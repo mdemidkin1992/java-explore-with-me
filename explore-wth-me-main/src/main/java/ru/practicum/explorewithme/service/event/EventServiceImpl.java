@@ -13,12 +13,15 @@ import ru.practicum.explorewithme.dto.event.EventShortDto;
 import ru.practicum.explorewithme.dto.event.NewEventDto;
 import ru.practicum.explorewithme.dto.event.UpdateEventUserRequest;
 import ru.practicum.explorewithme.dto.event.mapper.EventMapper;
+import ru.practicum.explorewithme.dto.location.NewCoordinatesDto;
+import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
 import ru.practicum.explorewithme.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.explorewithme.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.explorewithme.dto.request.ParticipationRequestDto;
 import ru.practicum.explorewithme.dto.request.mapper.RequestMapper;
 import ru.practicum.explorewithme.model.*;
 import ru.practicum.explorewithme.model.enums.EventState;
+import ru.practicum.explorewithme.model.enums.LocationStatus;
 import ru.practicum.explorewithme.model.enums.RequestStatus;
 import ru.practicum.explorewithme.repository.*;
 import ru.practicum.explorewithme.util.exception.ClientErrorException;
@@ -67,8 +70,12 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         request.setCreatedOn(LocalDateTime.now());
         request.setState(EventState.PENDING);
 
-        Location location = locationRepository.save(newEventDto.getLocation());
+        Location location = getExistingLocationOrCreateNewOne(newEventDto);
         request.setLocation(location);
+
+        Set<Location> locationList = getClosestLocations(newEventDto);
+        locationList.add(location);
+        request.setLocationList(new ArrayList<>(locationList));
 
         Event response = eventRepository.save(request);
         return EventMapper.mapEventFullDtoFromEntity(response);
@@ -305,6 +312,36 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         return response;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<EventShortDto> getEventsInLocation(
+            Long locationId, Double lat, Double lon, Double rad, int from, int size
+    ) {
+        Pageable page = PageRequest.of(from / size, size, Sort.by("eventDate").descending());
+        List<Event> eventList;
+
+        if (locationId != null) {
+            Location location = getExistingLocationOrThrowException(locationId);
+            eventList = eventRepository.findEventsWithLocationRadius(
+                    location.getLat(),
+                    location.getLon(),
+                    location.getRad(),
+                    EventState.PUBLISHED,
+                    page
+            );
+        } else {
+            if (lat == null || lon == null) {
+                throw new ClientErrorException("Conditions are not met");
+            } else {
+                eventList = eventRepository.findEventsWithLocationRadius(
+                        lat, lon, rad, EventState.PUBLISHED, page
+                );
+            }
+        }
+
+        return EventMapper.mapToEventShortDto(eventList);
+    }
+
     private int getConfirmedRequests(long id) {
         return requestRepository.findAllByEventIdAndStatus(id, RequestStatus.CONFIRMED).size();
     }
@@ -336,6 +373,34 @@ public class EventServiceImpl extends UpdateEventOperations implements EventServ
         return requestRepository.findById(requestId).orElseThrow(
                 () -> new EntityNotFoundException("Participation request with id: "
                         + requestId + " was not found")
+        );
+    }
+
+    private Set<Location> getClosestLocations(NewEventDto newEventDto) {
+        NewCoordinatesDto coordinates = newEventDto.getLocation();
+        Double lat = coordinates.getLat();
+        Double lon = coordinates.getLon();
+
+        return new HashSet<>(locationRepository.findLocationsWithinRadius(lat, lon));
+    }
+
+    private Location getExistingLocationOrCreateNewOne(NewEventDto newEventDto) {
+        NewCoordinatesDto coordinates = newEventDto.getLocation();
+        Double lat = coordinates.getLat();
+        Double lon = coordinates.getLon();
+
+        if (!locationRepository.existsByLatAndLon(lat, lon)) {
+            Location newLocation = LocationMapper.mapFromLocationShortDto(coordinates);
+            newLocation.setStatus(LocationStatus.SUGGESTED_BY_USER);
+            return locationRepository.save(newLocation);
+        } else {
+            return locationRepository.findByLatAndLon(lat, lon);
+        }
+    }
+
+    private Location getExistingLocationOrThrowException(long locationId) {
+        return locationRepository.findById(locationId).orElseThrow(
+                () -> new EntityNotFoundException("Location with id " + locationId + " not found")
         );
     }
 
