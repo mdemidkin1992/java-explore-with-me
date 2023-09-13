@@ -1,86 +1,84 @@
-## Афиша событий (java-explore-with-me)
-Приложение позволяет пользователям размещать события, регистрироваться на участие в них, просматривать списки событий по локациям.
-Бэкенд для веб-приложения, разработанный на Java/SpringBoot с использованием Docker, PostgreSQL и Hibernate.
+## Event Listings (java-explore-with-me)
+This application empowers users to post events, register for participation, and browse event lists by location. 
+The backend for this web application is developed using Java/SpringBoot and leverages Docker, PostgreSQL, and Hibernate.
 
-Микросервисная инфраструктура приложения реализована с помощью Docker и docker-compose.yml
-- Основной сервис реализован в модуле ```main``` и обрабатывает основную бизнес-логику приложения
-- Сервис статистики в модуле ```stats``` собирает статистику по просмотрам пользователями событий 
-- У каждого сервиса есть своя ```postgres``` база данных, настроенная в файлах ```application.properties```
+The application's microservices infrastructure is implemented using Docker and docker-compose.yml:
+- The primary service resides in the ```main``` module and handles the core business logic of the application
+- The statistics service, located in the ```stats``` module, collects data on user event views
+- Each service has its PostgreSQL database, configured in the ```application.properties``` files
+
 ___
-### Основной функционал ```explore-with-me-main```
-API основного сервиса разделите на три части:
-- ```public``` доступна без регистрации любому пользователю сети;
-- ```private``` доступна только авторизованным пользователям;
-- ```admin``` для администраторов сервиса.
+### Key Features of ```explore-with-me-main```
+API is divided into three parts:
+- ```Public```: Accessible to any network user without registration.
+- ```Private```: Accessible only to authorized users.
+- ```Admin```: Intended for service administrators.
 
-**Функционал ```public``` API**
-- сортировка списка событий по количеству просмотров либо по датам событий
-- просмотр подробной информации о конкретном событии
-- получение всех имеющихся категорий и подборок событий
-- **запросы для получения списка событий или полной информации о событии фиксируются в сервисе статистики**
+**```Public``` API functionality**
+- Sorting event lists by view count or event dates
+- Viewing detailed information about specific events
+- Retrieving all available event categories and collections
+- **Requests for event lists or complete event information are logged in the statistics service**
 
-**Функционал ```private``` API**
-- добавление / изменение / просмотр события 
-- подача заявок на участие в интересующих мероприятиях
-- создатель мероприятия имеет возможность подтверждать заявки, которые отправили другие пользователи сервиса
+**```Private``` API functionality**
+- Adding/modifying/viewing events
+- Submitting applications for participation in events of interest
+- Event creators have the ability to confirm applications submitted by other service users
 
-**Функционал ```admin``` API**
-- добавление / изменение / удаление категорий для событий
-- добавление / удаление / закрепление на главной странице подборки мероприятий
-- возможность модерации событий, размещённых пользователями, — публикация или отклонение
-- добавление / активация / просмотр / удаление пользователей
+**```Admin``` API functionality**
+- Adding/modifying/removing event categories.
+- Adding/removing/pinning event collections on the homepage.
+- Moderation capabilities for user-posted events, including publication or rejection.
+- Adding/activating/viewing/removing users.
 
-**Структура базы данных**
-- ```User```: пользователи делятся на ```admin```, ```public```, ```private```
-- ```Event```: события, которые выставляют зарегистированные ```private``` пользователи
-- ```Location```: локации, в которых проиходят события (подробнее см. "Дополнительный функционал")
-- ```Category```: категории событий
-- ```Compilation```: подборки событий, которые делают администраторы
-- ```ParticipationRequest```: запрос на участие в событии, если такая опция включена у события
+**Database Structure**
+- ```User```: Users are categorized as ```admin```, ```public```, or ```private```.
+- ```Event```: Events posted by registered ```private``` users.
+- ```Location```: Locations where events take place (see "Additional Functionality" for more details).
+- ```Category```: Event categories.
+- ```Compilation```: Event collections created by administrators.
+- ```ParticipationRequest```: Participation requests for events, if this option is enabled for the event.
 
 <img width="873" alt="Screenshot 2023-09-07 at 19 27 13" src="https://github.com/mdemidkin1992/java-explore-with-me/assets/118021621/6ba23e4e-5770-4b92-9038-6ee0f99accb1">
 
+**Http-client**
 
-**Http-клиент**
-
-Для отправки запросов на сохранение статистики из сервиса ```main``` в ```stats``` используется ```RestTemplate```.
-Класс клиента ```StatsClient``` реализован в отдельном подмодуле ```stats``` и импортирован как зависимость в ```main```. 
+To send requests to record statistics from the ```main``` service to ```stats```, ```RestTemplate``` is used. 
+The ```StatsClient``` class is implemented in a separate submodule called ```stats``` and is imported as a dependency in ```main```.
 ___
 
-### Сервис статистики ```explore-with-me-stats```
-**Функционал ```stats``` API**
-- запись информации о том, что был обработан запрос к эндпоинту API;
-- предоставление статистики за выбранные даты по выбранному эндпоинту.
+### Stats Service ```explore-with-me-stats``` Functionality
+- Recording information about processed API endpoint requests
+- Providing statistics for selected dates and endpoints
 ___
 
-#### Дополнительный функционал ```location_processing```
-
-1. Администратор имеет возможность добавлять новые локации ```Location```
-2. Зарегистрированные пользователи, выставляя события, указывают его координаты (```lat```, ```lon```):
-   - По геопозиции вычисляются ближайшие к событию локации, в радиус которых попадает события (```locationList```)
-   - У каждой локации также есть список входящих в нее событий (```eventList```), возникает связь ```many-to-many```
-3. Обычные пользователи могут смотреть список ```APPROVED_BY_ADMIN``` локаций и списки ```PUBLISHED``` событий в локациях:
-   - Список ```APPROVED_BY_ADMIN``` локаций включает в себя счетчик событий (```events```)
-   - Списки событий, которые могут просмотривать пользователи обязаны пройти публикацию администратора
+#### Additional Functionality ```location_processing```
+1. Administrators can add new locations ```Location```
+2. Registered users, when posting events, specify their coordinates (```lat```, ```lon```):
+   - Based on geolocation, the nearest locations where events occur are calculated (```locationList```)
+   - Each location also has a list of events associated with it (```eventList```), creating a ```many-to-many``` relationship.
+3. Regular users can view a list of ```APPROVED_BY_ADMIN``` locations and lists of ```PUBLISHED``` events in those locations:
+   - The list of ```APPROVED_BY_ADMIN``` locations includes an event counter (```events```)
+   - Lists of events that users can view must be approved by an administrator
 
 ![Untitled](https://github.com/mdemidkin1992/java-explore-with-me/assets/118021621/e41ad2ab-cd7a-4232-b1b1-67df8ae2c545)
 
-#### Добавленные контроллеры
+#### Newly Added Controllers
 #### Admin
 * ```POST /admin/locations```
 * ```UPDATE /admin/locations/{id}```
 * ```DELETE /admin/locations/{id}```
 
 #### Public
-* ```GET /locations``` – получение списка всех одобренных локаций
-* ```GET /events/{locationId}/locations``` – получение списка опубликованных событий в локации
+* ```GET /locations``` – Retrieve a list of all approved locations
+* ```GET /events/{locationId}/locations``` – Retrieve a list of published events in a location
 
-#### Обновленная модель данных
+#### Updated Data Model
 
-Локация как добавляет ее администратор ```Location```: ```name```, ```lat```, ```lon```, ```rad```.
+Location, as added by an administrator ```Location```: ```name```, ```lat```, ```lon```, ```rad```.
 
-При просмотре списка локаций возвращаем DTO ```LocationDtoWithEventsCount```:
-* ```name``` Название локации
-* ```events``` Количество событий в локации
+When viewing the list of locations, a ```LocationDtoWithEventsCount``` DTO is returned, including:
+* ```name``` Location name
+* ```events``` Number of events in the location
 
-Выводятся только одобренные администратором локации со статусом ```APPROVED_BY_ADMIN```.
+Only locations approved by administrators with the status ```APPROVED_BY_ADMIN``` are displayed.
